@@ -1,0 +1,190 @@
+    {
+    "id": "minimal",
+    "name": "Minimal",
+    "version": 1,
+    "canvas": {
+        "width": 540,
+        "height": 856,
+        "background": "#ffffff"
+    },
+    "roleColors": {
+        "participant": "#2563eb",
+        "organizer": "#dc2626",
+        "mentor": "#7c3aed",
+        "volunteer": "#059669"
+    },
+    "layers": [
+        {
+        "id": "side-bar",
+        "type": "rect",
+        "x": 0,
+        "y": 0,
+        "w": 8,
+        "h": 856,
+        "fill": "$role"
+        },
+        {
+        "id": "logo-left",
+        "type": "image",
+        "x": 40,
+        "y": 36,
+        "w": 180,
+        "h": 56,
+        "src": "{{logoLeft}}",
+        "fit": "contain",
+        "align": "left"
+        },
+        {
+        "id": "logo-right",
+        "type": "image",
+        "x": 320,
+        "y": 36,
+        "w": 180,
+        "h": 56,
+        "src": "{{logoRight}}",
+        "fit": "contain",
+        "align": "right"
+        },
+        {
+        "id": "top-line",
+        "type": "rect",
+        "x": 40,
+        "y": 112,
+        "w": 460,
+        "h": 2,
+        "fill": "#e5e7eb"
+        },
+        {
+        "id": "event-name",
+        "type": "text",
+        "x": 40,
+        "y": 132,
+        "w": 460,
+        "h": 40,
+        "text": "{{eventName}}",
+        "font": "Arial, sans-serif",
+        "size": 30,
+        "minSize": 18,
+        "weight": 700,
+        "color": "#111827",
+        "align": "left"
+        },
+        {
+        "id": "event-subtitle",
+        "type": "text",
+        "x": 40,
+        "y": 176,
+        "w": 460,
+        "h": 28,
+        "text": "{{eventSubtitle}}",
+        "font": "Arial, sans-serif",
+        "size": 18,
+        "minSize": 12,
+        "weight": 400,
+        "color": "#6b7280",
+        "align": "left",
+        "optional": true
+        },
+        {
+        "id": "photo-ring",
+        "type": "rect",
+        "x": 130,
+        "y": 236,
+        "w": 280,
+        "h": 280,
+        "fill": "$role",
+        "radius": 140
+        },
+        {
+        "id": "photo-gap",
+        "type": "rect",
+        "x": 134,
+        "y": 240,
+        "w": 272,
+        "h": 272,
+        "fill": "#ffffff",
+        "radius": 136
+        },
+        {
+        "id": "photo",
+        "type": "image",
+        "x": 140,
+        "y": 246,
+        "w": 260,
+        "h": 260,
+        "src": "{{photo}}",
+        "fit": "cover",
+        "shape": "circle",
+        "fallback": "initials"
+        },
+        {
+        "id": "name",
+        "type": "text",
+        "x": 40,
+        "y": 544,
+        "w": 460,
+        "h": 88,
+        "text": "{{name}}",
+        "font": "Arial, sans-serif",
+        "size": 38,
+        "minSize": 22,
+        "weight": 700,
+        "color": "#111827",
+        "align": "center",
+        "maxLines": 2,
+        "lineHeight": 1.1
+        },
+        {
+        "id": "role-badge",
+        "type": "badge",
+        "x": 185,
+        "y": 648,
+        "w": 170,
+        "h": 38,
+        "text": "{{role}}",
+        "fill": "$role",
+        "color": "#ffffff",
+        "size": 16
+        },
+        {
+        "id": "bottom-line",
+        "type": "rect",
+        "x": 40,
+        "y": 726,
+        "w": 460,
+        "h": 2,
+        "fill": "#e5e7eb"
+        },
+        {
+        "id": "id-number",
+        "type": "text",
+        "x": 40,
+        "y": 748,
+        "w": 230,
+        "h": 32,
+        "text": "ID: {{idNumber}}",
+        "font": "Arial, sans-serif",
+        "size": 22,
+        "minSize": 14,
+        "weight": 600,
+        "color": "#111827",
+        "align": "left"
+        },
+        {
+        "id": "event-date",
+        "type": "text",
+        "x": 280,
+        "y": 750,
+        "w": 220,
+        "h": 30,
+        "text": "{{eventDate}}",
+        "font": "Arial, sans-serif",
+        "size": 20,
+        "minSize": 12,
+        "weight": 400,
+        "color": "#4b5563",
+        "align": "right",
+        "optional": true
+        }
+    ]
+    }
