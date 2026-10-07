@@ -1,0 +1,50 @@
+    {
+    "id": "modern",
+    "name": "Modern",
+    "version": 1,
+    "canvas": { "width": 540, "height": 856, "background": "#ffffff" },
+    "roleColors": {
+        "participant": "#2563eb",
+        "organizer": "#dc2626",
+        "mentor": "#7c3aed",
+        "volunteer": "#059669"
+    },
+    "layers": [
+        { "id": "top-strip", "type": "rect", "x": 0, "y": 0, "w": 540, "h": 14, "fill": "$role" },
+
+        { "id": "logo-left", "type": "image", "x": 30, "y": 30, "w": 200, "h": 64,
+        "src": "{{logoLeft}}", "fit": "contain", "align": "left" },
+        { "id": "logo-right", "type": "image", "x": 310, "y": 30, "w": 200, "h": 64,
+        "src": "{{logoRight}}", "fit": "contain", "align": "right" },
+
+        { "id": "event-name", "type": "text", "x": 30, "y": 112, "w": 480, "h": 56,
+        "text": "{{eventName}}", "font": "Arial, sans-serif", "size": 44, "minSize": 24,
+        "weight": 700, "color": "#111827", "align": "center", "uppercase": true },
+        { "id": "event-subtitle", "type": "text", "x": 30, "y": 170, "w": 480, "h": 34,
+        "text": "{{eventSubtitle}}", "font": "Arial, sans-serif", "size": 22, "minSize": 14,
+        "weight": 700, "color": "$role", "align": "center", "uppercase": true, "optional": true },
+
+        { "id": "photo-frame", "type": "rect", "x": 150, "y": 218, "w": 240, "h": 300,
+        "fill": "$role", "radius": 10 },
+        { "id": "photo", "type": "image", "x": 156, "y": 224, "w": 228, "h": 288,
+        "src": "{{photo}}", "fit": "cover", "shape": "rect", "fallback": "initials" },
+
+        { "id": "name", "type": "text", "x": 30, "y": 540, "w": 480, "h": 84,
+        "text": "{{name}}", "font": "Arial, sans-serif", "size": 38, "minSize": 22,
+        "weight": 700, "color": "#111827", "align": "center", "uppercase": true,
+        "maxLines": 2, "lineHeight": 1.1 },
+
+        { "id": "role-badge", "type": "badge", "x": 145, "y": 644, "w": 250, "h": 50,
+        "text": "{{role}}", "fill": "$role", "color": "#ffffff", "size": 24 },
+
+        { "id": "id-number", "type": "text", "x": 30, "y": 710, "w": 480, "h": 32,
+        "text": "ID: {{idNumber}}", "font": "Arial, sans-serif", "size": 24, "minSize": 16,
+        "weight": 700, "color": "#111827", "align": "center" },
+
+        { "id": "event-date", "type": "text", "x": 30, "y": 760, "w": 480, "h": 30,
+        "text": "{{eventDate}}", "font": "Arial, sans-serif", "size": 22, "minSize": 14,
+        "weight": 600, "color": "#374151", "align": "center", "uppercase": true, "optional": true },
+
+        { "id": "footer-band", "type": "rect", "x": 0, "y": 816, "w": 540, "h": 40, "fill": "$role" }
+    ]
+    }
