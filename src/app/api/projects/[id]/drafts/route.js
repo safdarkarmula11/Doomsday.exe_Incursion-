@@ -50,7 +50,7 @@ export async function GET(request, { params }) {
         warnings: warnings.filter((w) => w.field !== "photo").map((w) => ({ message: describe(w) })),
       });
     }
-    return Response.json({ drafts: out, roles, role });
+    return Response.json({ drafts: out, roles, role, selectedId: drafts.find((d) => d.selected)?.id ?? null });
   } catch (e) {
     console.error("GET drafts failed:", e);
     return Response.json({ error: DB_ERROR }, { status: 500 });
