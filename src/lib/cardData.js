@@ -34,3 +34,14 @@ export function cardData(eventData, person) {
 export function samplePerson(role) {
   return { name: "Aarav Sharma", role, idNumber: "SAMPLE-001" };
 }
+
+/** A saved Person row (or imported row) -> the data one card needs. Extra CSV columns are kept for future templates. */
+export function personToCard(p) {
+  return {
+    ...(p.extra ?? {}),
+    name: p.name,
+    role: p.role,
+    idNumber: p.externalId ?? "",
+    photo: p.photoUrl ?? "",
+  };
+}

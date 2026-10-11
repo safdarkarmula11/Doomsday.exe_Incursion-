@@ -7,6 +7,7 @@ import Stepper from "@/components/wizard/Stepper";
 import EditorCanvas from "@/components/editor/EditorCanvas";
 import PropertiesPanel from "@/components/editor/PropertiesPanel";
 import ColorField from "@/components/editor/ColorField";
+import RefineBox from "@/components/editor/RefineBox";
 import { applyFields, cardData, samplePerson } from "@/lib/cardData";
 import { EMPTY_CONFIG, applyConfig, layerLabel } from "@/lib/editorConfig";
 
@@ -181,7 +182,7 @@ export default function EditorPage() {
     commit((c) => ({ ...c, roleColors: { ...c.roleColors, [r]: value } }), `role-${r}`);
 
   async function next() {
-    if (await save()) router.push(`/projects/${id}/export`);
+    if (await save()) router.push(`/projects/${id}/people`);
   }
 
   // ---- screens -------------------------------------------------------------------------
@@ -277,6 +278,13 @@ export default function EditorPage() {
 
           {/* right: tools */}
           <div className="space-y-4">
+            <RefineBox
+              projectId={id}
+              draftId={loaded.draftId}
+              config={config}
+              selectedId={selectedId}
+              onApply={(next) => commit(() => next)}
+            />
             {selected ? (
               <PropertiesPanel
                 layer={selected}
@@ -352,7 +360,7 @@ export default function EditorPage() {
             disabled={saveState === "saving"}
             className="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-wait disabled:bg-indigo-400"
           >
-            Continue to export
+            Continue to people
           </button>
         </div>
       </div>

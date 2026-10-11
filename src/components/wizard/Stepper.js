@@ -1,6 +1,6 @@
-const STEPS = ["Describe", "Questions", "Drafts", "Editor", "Export"];
+const STEPS = ["Describe", "Questions", "Drafts", "Editor", "People", "Export"];
 
-/** Progress bar shown at the top of every wizard page. current = index of the active step (0-4). */
+/** Progress bar shown at the top of every wizard page. current = index of the active step (0-5). */
 export default function Stepper({ current = 0 }) {
   return (
     <ol className="mb-8 flex items-center gap-2 text-sm" aria-label="Progress">

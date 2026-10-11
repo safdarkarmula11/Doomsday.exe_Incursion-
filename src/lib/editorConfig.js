@@ -28,7 +28,7 @@ const hex = z.string().regex(/^#[0-9a-fA-F]{6}$/);
 const pos = z.number().finite().min(-2000).max(4000);
 const len = z.number().finite().min(1).max(4000);
 
-const LayerOverride = z
+export const LayerOverride = z
   .object({
     x: pos.optional(),
     y: pos.optional(),
