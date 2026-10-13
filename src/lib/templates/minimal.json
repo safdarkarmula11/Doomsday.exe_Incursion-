@@ -1,4 +1,4 @@
-    {
+{
     "id": "minimal",
     "name": "Minimal",
     "version": 1,
@@ -144,7 +144,7 @@
         "text": "{{role}}",
         "fill": "$role",
         "color": "#ffffff",
-        "size": 16
+        "size": 18
         },
         {
         "id": "bottom-line",
@@ -160,7 +160,7 @@
         "type": "text",
         "x": 40,
         "y": 748,
-        "w": 230,
+        "w": 200,
         "h": 32,
         "text": "ID: {{idNumber}}",
         "font": "Arial, sans-serif",
@@ -173,9 +173,9 @@
         {
         "id": "event-date",
         "type": "text",
-        "x": 280,
+        "x": 240,
         "y": 750,
-        "w": 220,
+        "w": 160,
         "h": 30,
         "text": "{{eventDate}}",
         "font": "Arial, sans-serif",
@@ -185,6 +185,7 @@
         "color": "#4b5563",
         "align": "right",
         "optional": true
-        }
+        },
+        { "id": "qr", "type": "qr", "x": 410, "y": 730, "w": 96, "h": 96, "value": "{{qrUrl}}" }
     ]
     }

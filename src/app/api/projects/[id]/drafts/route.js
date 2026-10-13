@@ -1,10 +1,12 @@
 import { db } from "@/lib/db";
 import { validateEventData } from "@/lib/eventData";
 import { ensureTemplates, renderDraft } from "@/lib/drafts";
+import { kitForProject } from "@/lib/brandKits";
 
 /** Renderer warnings -> short sentences. The sample person has no photo on purpose, so that one is skipped. */
 function describe(w) {
   if (w.kind === "overflow") return `Text in "${w.layerId}" was shortened to fit.`;
+  if (w.kind === "missing" && w.field === "qrUrl") return "No QR code: it needs the attendance link and the person's ID.";
   if (w.kind === "missing") return `Nothing to show for "${w.field}".`;
   return `"${w.layerId}" cannot be drawn yet.`;
 }
@@ -28,6 +30,7 @@ export async function GET(request, { params }) {
     const loaded = await loadProject(id);
     if (loaded.error) return loaded.error;
     const { eventData } = loaded;
+    const kit = await kitForProject(loaded.project);
 
     const roles = Object.keys(eventData.roles);
     const wanted = new URL(request.url).searchParams.get("role");
@@ -41,7 +44,7 @@ export async function GET(request, { params }) {
 
     const out = [];
     for (const d of drafts) {
-      const { svg, warnings } = renderDraft(d, d.template, eventData, role);
+      const { svg, warnings } = renderDraft(d, d.template, eventData, role, kit);
       out.push({
         id: d.id,
         name: d.template.name,
@@ -57,13 +60,24 @@ export async function GET(request, { params }) {
   }
 }
 
-/** POST { regenerate?: true } -> creates one draft per template. Does nothing if drafts exist, unless regenerate. */
+/**
+ * POST { regenerate?: true }  -> creates one draft per built-in template. Does nothing if drafts exist, unless regenerate.
+ * POST { addTemplateId }      -> adds one more design from any template (for example one you uploaded).
+ */
 export async function POST(request, { params }) {
   const { id } = await params;
   const body = await request.json().catch(() => ({}));
   try {
     const loaded = await loadProject(id);
     if (loaded.error) return loaded.error;
+
+    if (body?.addTemplateId) {
+      const template = await db.template.findUnique({ where: { id: String(body.addTemplateId) } });
+      if (!template) return Response.json({ error: "That template was not found." }, { status: 404 });
+      const latest = await db.draft.findFirst({ where: { projectId: id }, orderBy: { version: "desc" } });
+      await db.draft.create({ data: { projectId: id, templateId: template.id, config: {}, version: latest?.version ?? 1 } });
+      return Response.json({ created: 1 }, { status: 201 });
+    }
 
     const existing = await db.draft.count({ where: { projectId: id } });
     if (existing > 0 && !body?.regenerate) return Response.json({ created: 0 });

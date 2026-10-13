@@ -1,6 +1,8 @@
 import { db } from "@/lib/db";
 import { validateEventData } from "@/lib/eventData";
 import { EditorConfigSchema, normalizeConfig } from "@/lib/editorConfig";
+import { applyBrand } from "@/lib/brand";
+import { kitForProject } from "@/lib/brandKits";
 
 const DB_ERROR = "Could not reach the database. Check that PostgreSQL is running and DATABASE_URL in .env is correct.";
 
@@ -15,9 +17,10 @@ export async function GET(_request, { params }) {
     if (!checked.ok) {
       return Response.json({ error: "Finish the event details first.", needsDetails: true }, { status: 409 });
     }
+    const kit = await kitForProject(project);
     return Response.json({
       draft: { id: draft.id, name: draft.template.name, selected: draft.selected },
-      template: draft.template.json,
+      template: applyBrand(draft.template.json, kit),
       config: normalizeConfig(draft.config),
       eventData: checked.data,
       roles: Object.keys(checked.data.roles),

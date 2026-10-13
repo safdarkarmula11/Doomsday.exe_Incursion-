@@ -9,7 +9,9 @@ import { applyConfig } from "@/lib/editorConfig";
 const describe = (w) =>
   w.kind === "overflow"
     ? "The text in one box is too long and was shortened."
-    : w.kind === "missing" && w.field === "photo"
+    : w.kind === "missing" && w.field === "qrUrl"
+      ? "No QR code, because this person has no ID."
+      : w.kind === "missing" && w.field === "photo"
       ? "No photo, so initials are shown."
       : w.kind === "missing"
         ? `Nothing to show for "${w.field}".`

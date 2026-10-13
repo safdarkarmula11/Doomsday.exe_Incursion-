@@ -23,6 +23,7 @@ export default function EditorPage() {
   const [role, setRole] = useState("");
   const [selectedId, setSelectedId] = useState(null);
   const [saveState, setSaveState] = useState("saved"); // saved | saving | error
+  const [tplNote, setTplNote] = useState(""); // result of "Save as template"
   const [hist, setHist] = useState({ past: [], present: EMPTY_CONFIG, future: [] });
 
   // history lives in a ref too, so keyboard handlers and the save timer always see the latest value
@@ -183,6 +184,21 @@ export default function EditorPage() {
 
   async function next() {
     if (await save()) router.push(`/projects/${id}/people`);
+  }
+
+  // Keeps this design, with all your changes, as a template any event can start from.
+  async function saveAsTemplate() {
+    const name = window.prompt("Name for the new template:", `${loaded.template.name} (edited)`);
+    if (!name?.trim()) return;
+    setTplNote("");
+    if (!(await save())) return;
+    const res = await fetch("/api/templates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: name.trim(), fromDraftId: loaded.draftId }),
+    });
+    const d = await res.json().catch(() => ({}));
+    setTplNote(res.ok ? `Saved the template "${d.template.name}".` : d.error || "Could not save the template.");
   }
 
   // ---- screens -------------------------------------------------------------------------
@@ -351,9 +367,19 @@ export default function EditorPage() {
         </div>
 
         <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-6">
-          <Link href={`/projects/${id}/drafts`} className="text-sm font-medium text-indigo-600 hover:underline">
-            Back to the designs
-          </Link>
+          <div className="flex flex-wrap items-center gap-4">
+            <Link href={`/projects/${id}/drafts`} className="text-sm font-medium text-indigo-600 hover:underline">
+              Back to the designs
+            </Link>
+            <button type="button" onClick={saveAsTemplate} className="text-sm font-medium text-indigo-600 hover:underline">
+              Save as template
+            </button>
+            {tplNote && (
+              <span role="status" className="text-xs text-slate-600">
+                {tplNote}
+              </span>
+            )}
+          </div>
           <button
             type="button"
             onClick={next}

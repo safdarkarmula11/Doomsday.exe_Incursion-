@@ -1,4 +1,4 @@
-    {
+{
     "id": "bold",
     "name": "Bold",
     "version": 1,
@@ -18,7 +18,7 @@
         "id": "logo-left",
         "type": "image",
         "x": 30,
-        "y": 24,
+        "y": 30,
         "w": 200,
         "h": 62,
         "src": "{{logoLeft}}",
@@ -29,7 +29,7 @@
         "id": "logo-right",
         "type": "image",
         "x": 310,
-        "y": 24,
+        "y": 30,
         "w": 200,
         "h": 62,
         "src": "{{logoRight}}",
@@ -187,15 +187,16 @@
         {
         "id": "role-badge",
         "type": "badge",
-        "x": 70,
-        "y": 752,
-        "w": 400,
+        "x": 40,
+        "y": 740,
+        "w": 330,
         "h": 72,
         "text": "{{role}}",
         "fill": "#ffffff",
         "color": "$role",
         "size": 34,
         "radius": 10
-        }
+        },
+        { "id": "qr", "type": "qr", "x": 404, "y": 726, "w": 100, "h": 100, "value": "{{qrUrl}}" }
     ]
     }

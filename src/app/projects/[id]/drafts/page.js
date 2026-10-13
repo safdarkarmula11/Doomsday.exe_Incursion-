@@ -14,7 +14,10 @@ export default function DraftsPage() {
   const [role, setRole] = useState("");
   const [error, setError] = useState("");
   const [needsDetails, setNeedsDetails] = useState(false);
-  const [busy, setBusy] = useState(""); // "" | "regenerate" | <draftId>
+  const [busy, setBusy] = useState(""); // "" | "regenerate" | "brand" | "add" | <draftId>
+  const [brand, setBrand] = useState(null); // { kitId, kits }
+  const [allTemplates, setAllTemplates] = useState([]);
+  const [addId, setAddId] = useState("");
   const started = useRef(false);
 
   const load = useCallback(
@@ -46,11 +49,58 @@ export default function DraftsPage() {
         setDrafts(data.drafts);
         setRoles(data.roles);
         setRole(data.role);
+        const [b, t] = await Promise.all([
+          fetch(`/api/projects/${id}/brand`).then((r) => r.json()),
+          fetch("/api/templates?brief=1").then((r) => r.json()),
+        ]);
+        if (b.kits) setBrand(b);
+        if (t.templates) setAllTemplates(t.templates);
       } catch (e) {
         setError(e.message);
       }
     })();
   }, [id, load]);
+
+  async function changeKit(kitId) {
+    setBusy("brand");
+    setError("");
+    try {
+      const res = await fetch(`/api/projects/${id}/brand`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ brandKitId: kitId }),
+      });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "Could not change the brand kit.");
+      setBrand((b) => ({ ...b, kitId }));
+      const data = await load(role);
+      setDrafts(data.drafts);
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setBusy("");
+    }
+  }
+
+  async function addDesign() {
+    if (!addId) return;
+    setBusy("add");
+    setError("");
+    try {
+      const res = await fetch(`/api/projects/${id}/drafts`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ addTemplateId: addId }),
+      });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "Could not add the design.");
+      const data = await load(role);
+      setDrafts(data.drafts);
+      setAddId("");
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setBusy("");
+    }
+  }
 
   async function changeRole(next) {
     setRole(next);
@@ -150,6 +200,61 @@ export default function DraftsPage() {
             <p className="mt-2 text-xs text-slate-500">
               Previews use a sample person (not a real attendee). Your own list of people is added later.
             </p>
+
+            {brand && (
+              <div className="mt-4 flex flex-wrap items-end gap-x-6 gap-y-3 rounded-xl border border-slate-200 bg-white p-3 text-sm">
+                <label className="block">
+                  <span className="block text-xs font-medium text-slate-600">Brand kit (logos, role colours, fonts)</span>
+                  <select
+                    value={brand.kitId}
+                    onChange={(e) => changeKit(e.target.value)}
+                    disabled={busy !== ""}
+                    className="mt-1 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm"
+                  >
+                    {brand.kits.map((k) => (
+                      <option key={k.id} value={k.id}>
+                        {k.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="block">
+                  <span className="block text-xs font-medium text-slate-600">Add a design from a template</span>
+                  <span className="mt-1 flex gap-2">
+                    <select
+                      value={addId}
+                      onChange={(e) => setAddId(e.target.value)}
+                      disabled={busy !== ""}
+                      className="rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm"
+                    >
+                      <option value="">Choose a template...</option>
+                      {allTemplates.map((t) => (
+                        <option key={t.id} value={t.id}>
+                          {t.name}
+                          {t.builtIn ? "" : " (yours)"}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      onClick={addDesign}
+                      disabled={!addId || busy !== ""}
+                      className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm hover:bg-slate-50 disabled:opacity-50"
+                    >
+                      {busy === "add" ? "Adding..." : "Add"}
+                    </button>
+                  </span>
+                </label>
+                <span className="flex gap-4 pb-1 text-xs">
+                  <Link href="/brand-kits" className="font-medium text-indigo-600 hover:underline">
+                    Manage brand kits
+                  </Link>
+                  <Link href="/templates" className="font-medium text-indigo-600 hover:underline">
+                    Manage templates
+                  </Link>
+                </span>
+              </div>
+            )}
 
             <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {drafts.map((d) => (

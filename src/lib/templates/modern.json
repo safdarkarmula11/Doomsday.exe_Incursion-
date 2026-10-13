@@ -1,4 +1,4 @@
-    {
+{
     "id": "modern",
     "name": "Modern",
     "version": 1,
@@ -44,6 +44,8 @@
         { "id": "event-date", "type": "text", "x": 30, "y": 760, "w": 480, "h": 30,
         "text": "{{eventDate}}", "font": "Arial, sans-serif", "size": 22, "minSize": 14,
         "weight": 600, "color": "#374151", "align": "center", "uppercase": true, "optional": true },
+
+        { "id": "qr", "type": "qr", "x": 408, "y": 704, "w": 100, "h": 100, "value": "{{qrUrl}}" },
 
         { "id": "footer-band", "type": "rect", "x": 0, "y": 816, "w": 540, "h": 40, "fill": "$role" }
     ]

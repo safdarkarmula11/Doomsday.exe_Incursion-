@@ -1,5 +1,6 @@
-    import { bindText, escapeXml, initials, isSafeSrc, resolveColor } from './bind';
+import { bindText, escapeXml, initials, isSafeSrc, resolveColor } from './bind';
     import { approxMeasure, fitText } from './fitText';
+import QRCode from 'qrcode';
     
     const DEFAULT_FONT = 'Arial, Helvetica, sans-serif';
     const num = (v) => Math.round(v * 100) / 100; // keep SVG numbers short
@@ -102,7 +103,45 @@
     return `${bg}<text x="${cx}" y="${cy}" font-family="${DEFAULT_FONT}" font-size="${num(size)}" font-weight="700" fill="${color}" text-anchor="middle" dominant-baseline="central">${escapeXml(letters)}</text>`;
     }
     
-    // ---- ONE LAYER ------------------------------------------------------------
+    // ---- QR -------------------------------------------------------------------
+// Drawn as ONE <path> (no image, no network), so it stays sharp at any size and
+// in PDF. The white box keeps a 2-module quiet zone so phones can scan it.
+function renderQr(l, t, d, warnings) {
+    const { text: value, missing } = bindText(l.value, d);
+    if (!value) {
+    if (!l.optional) warnings.push({ layerId: l.id, kind: 'missing', field: missing[0] ?? 'qrUrl' });
+    return '';
+    }
+    let qr;
+    try {
+    qr = QRCode.create(value, { errorCorrectionLevel: 'M' });
+    } catch {
+    warnings.push({ layerId: l.id, kind: 'overflow' }); // too long to fit in a QR code
+    return '';
+    }
+    const n = qr.modules.size;
+    const margin = 2;
+    const side = Math.min(l.w, l.h);
+    const cell = side / (n + margin * 2);
+    const ox = l.x + (l.w - side) / 2;
+    const oy = l.y + (l.h - side) / 2;
+    let path = '';
+    for (let r = 0; r < n; r++) {
+    let c = 0;
+    while (c < n) {
+        if (!qr.modules.get(r, c)) { c++; continue; }
+        const start = c;
+        while (c < n && qr.modules.get(r, c)) c++;
+        path += `M${start + margin} ${r + margin}h${c - start}v1h${-(c - start)}z`;
+    }
+    }
+    return (
+    `<rect x="${num(ox)}" y="${num(oy)}" width="${num(side)}" height="${num(side)}" fill="#ffffff"/>` +
+    `<path transform="translate(${num(ox)} ${num(oy)}) scale(${cell})" d="${path}" fill="#000000" shape-rendering="crispEdges"/>`
+    );
+}
+
+// ---- ONE LAYER ------------------------------------------------------------
     function renderLayer(l, t, d, warnings, measure) {
     if (l.hideIfEmpty) {
         const v = d[l.hideIfEmpty];
@@ -113,8 +152,9 @@
         case 'text':  return renderText(l, t, d, warnings, measure);
         case 'badge': return renderBadge(l, t, d, warnings);
         case 'image': return renderImage(l, t, d, warnings);
+        case 'qr':    return renderQr(l, t, d, warnings);
         default:
-        // 'qr' (Task 5) and anything unknown
+        // anything unknown
         warnings.push({ layerId: l.id, kind: 'unsupported' });
         return '';
     }
@@ -133,4 +173,3 @@
         `  ${body}\n</svg>`;
     return { svg, warnings };
     }
-    

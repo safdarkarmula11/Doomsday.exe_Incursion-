@@ -75,8 +75,11 @@ export function applyConfig(template, config) {
   return { ...template, roleColors: { ...template.roleColors, ...cfg.roleColors }, layers };
 }
 
+const LABELS = { qr: "QR code", "id-number": "ID number" };
+
 /** "event-name" -> "Event name" */
 export function layerLabel(id) {
+  if (LABELS[id]) return LABELS[id];
   const s = id.replace(/[-_]+/g, " ").trim();
   return s.charAt(0).toUpperCase() + s.slice(1);
 }

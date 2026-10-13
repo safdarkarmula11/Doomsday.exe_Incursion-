@@ -7,6 +7,7 @@ import { renderCard } from "@/lib/renderer/renderCard";
 import { templates } from "@/lib/templates";
 import { applyFields, cardData, samplePerson } from "@/lib/cardData";
 import { applyConfig } from "@/lib/editorConfig";
+import { applyBrand } from "@/lib/brand";
 
 /** Make sure every template in src/lib/templates exists as a Template row. Returns { slug: row }. */
 export async function ensureTemplates() {
@@ -22,8 +23,8 @@ export async function ensureTemplates() {
 }
 
 /** Render one draft (with the user's editor changes) for one sample role. */
-export function renderDraft(draft, template, eventData, role) {
-  const t = applyConfig(applyFields(template.json, eventData.fieldsToShow ?? []), draft.config);
+export function renderDraft(draft, template, eventData, role, kit) {
+  const t = applyConfig(applyFields(applyBrand(template.json, kit), eventData.fieldsToShow ?? []), draft.config);
   const { svg, warnings } = renderCard(t, cardData(eventData, samplePerson(role)));
   // Several cards share one page, so clip-path ids must be unique per card.
   const prefix = `d${draft.id.slice(-6)}_`;

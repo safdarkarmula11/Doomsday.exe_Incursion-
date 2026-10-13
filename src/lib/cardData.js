@@ -11,10 +11,20 @@ export const LOGO_RIGHT = "/logos/NIT_Surat_Logo.svg.webp";
 const LAYERS_FOR_FIELD = {
   photo: (id) => id.startsWith("photo"), // photo, photo-frame, photo-ring, photo-gap
   id: (id) => id === "id-number",
+  qr: (id) => id === "qr",
 };
 export function applyFields(template, fieldsToShow = []) {
   const off = Object.entries(LAYERS_FOR_FIELD).filter(([field]) => !fieldsToShow.includes(field));
   return { ...template, layers: template.layers.filter((l) => !off.some(([, matches]) => matches(l.id))) };
+}
+
+/** The link inside one person's QR code: the attendance link plus their ID. Empty when either is missing. */
+export function qrLink(base, id) {
+  const b = String(base ?? "").trim();
+  const i = String(id ?? "").trim();
+  if (!b || !i) return "";
+  if (/[\/=?&]$/.test(b)) return b + encodeURIComponent(i);
+  return b.includes("?") ? `${b}&id=${encodeURIComponent(i)}` : `${b}/${encodeURIComponent(i)}`;
 }
 
 /** The data one card needs, built from the saved event details plus one person. */
@@ -26,6 +36,7 @@ export function cardData(eventData, person) {
     venue: eventData.venue,
     logoLeft: LOGO_LEFT,
     logoRight: LOGO_RIGHT,
+    qrUrl: qrLink(eventData.qrBaseUrl, person.idNumber),
     ...person,
   };
 }
