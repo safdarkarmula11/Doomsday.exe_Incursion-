@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import { AlertTriangle, CheckCircle2, Info } from "lucide-react";
 import Stepper from "@/components/wizard/Stepper";
 
 const PART_SIZE = 50; // keep in step with PART_SIZE in src/lib/export/cards.js
@@ -12,10 +13,22 @@ const FORMATS = [
   { key: "svg", label: "SVG", hint: "for design tools" },
 ];
 
-const btn =
-  "rounded-lg px-3 py-2 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50";
-const btnPrimary = `${btn} bg-indigo-600 text-white hover:bg-indigo-700`;
-const btnLight = `${btn} border border-slate-300 bg-white text-slate-800 hover:bg-slate-100`;
+const btnPrimary = "btn-primary";
+const btnLight = "btn-secondary";
+
+function SectionHead({ n, title, tag }) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center gap-3">
+        <span className="mono flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-indigo-50 font-semibold text-indigo-700" aria-hidden="true">
+          {n}
+        </span>
+        <h2 className="section-title text-lg">{title}</h2>
+      </div>
+      {tag}
+    </div>
+  );
+}
 
 function readNotes(res) {
   try {
@@ -203,16 +216,17 @@ export default function ExportPage() {
   const parts = Math.ceil(count / PART_SIZE);
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
-      <div className="mx-auto max-w-3xl px-4 py-10">
+    <main className="min-h-screen">
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:py-10">
         <Stepper current={5} />
-        <h1 className="text-2xl font-bold">Export</h1>
-        <p className="mt-2 text-slate-600">
+        <p className="eyebrow mt-2">Step 6 of 6</p>
+        <h1 className="page-title">Export</h1>
+        <p className="page-sub max-w-2xl">
           Download your cards. Each card is 54 × 85.6 mm, the standard ID card size, with both logos built in.
         </p>
 
         {error && (
-          <p role="alert" className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+          <p role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}{" "}
             {needsDesign && (
               <Link href={`/projects/${id}/drafts`} className="font-medium underline">
@@ -222,108 +236,113 @@ export default function ExportPage() {
           </p>
         )}
 
-        <section className="mt-6 rounded-xl border border-slate-200 bg-white p-5" aria-label="Pre-flight check">
-          <div className="flex items-center justify-between gap-3">
-            <h2 className="text-lg font-semibold">Pre-flight check</h2>
-            <button type="button" onClick={runPre} disabled={preLoading} className={btnLight}>
-              {preLoading ? "Checking..." : "Check again"}
-            </button>
-          </div>
-          {!pre && <p className="mt-2 text-sm text-slate-500">{preLoading ? "Checking your cards..." : "The check could not run."}</p>}
-          {pre && !pre.items.some((i) => i.level === "warn") && (
-            <p role="status" className="mt-2 rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
-              Looks good. {pre.checked > 0 ? `All ${pre.checked} cards passed.` : "The design passed."}
-            </p>
-          )}
-          {pre && pre.items.length > 0 && (
-            <ul className="mt-3 space-y-2">
-              {pre.items.map((item) => (
-                <li
-                  key={item.title}
-                  className={`rounded-lg px-3 py-2 text-sm ${item.level === "warn" ? "bg-amber-50 text-amber-900" : "bg-slate-50 text-slate-700"}`}
-                >
-                  <p className="font-medium">{item.title}</p>
-                  <p className="text-xs">{item.detail}</p>
-                  {item.examples && <p className="mt-1 text-xs">{item.examples.join(", ")}</p>}
-                </li>
-              ))}
-            </ul>
-          )}
-          {pre?.items.some((i) => i.level === "warn") && (
-            <p className="mt-3 text-xs text-slate-500">
-              You can still download.{" "}
-              <Link href={`/projects/${id}/editor`} className="font-medium text-indigo-600 underline">
-                Fix in the editor
-              </Link>{" "}
-              and press Check again.
-            </p>
-          )}
-        </section>
-
-        <label className="mt-6 flex items-start gap-3 rounded-xl border border-slate-200 bg-white p-4 text-sm">
-          <input type="checkbox" checked={printReady} onChange={(e) => setPrintReady(e.target.checked)} className="mt-1 h-4 w-4" />
-          <span>
-            <span className="font-medium">Print-ready PDF and SVG</span>
-            <span className="block text-xs text-slate-600">
-              Adds a 3 mm bleed (colour that runs past the cut line) and crop marks, which print shops ask for. Leave it off to print on an office printer. PNG is never changed.
-            </span>
-          </span>
-        </label>
-
-        <section className="mt-6 rounded-xl border border-slate-200 bg-white p-5">
-          <h2 className="text-lg font-semibold">One card</h2>
-          <div className="mt-4 grid gap-5 sm:grid-cols-[240px_1fr]">
-            <div className="mx-auto w-full max-w-[240px]">
-              <div
-                className="overflow-hidden rounded-md bg-white shadow-md ring-1 ring-slate-200"
-                style={{ aspectRatio: printReady ? "660 / 976" : "540 / 856" }}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                {previewUrl && <img src={previewUrl} alt="Preview of the card" className={`block h-full w-full ${previewing ? "opacity-50" : ""}`} />}
+        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px] lg:items-start">
+          <div className="space-y-6 lg:col-start-1 lg:row-start-1">
+            <section className="card-pad" aria-label="Pre-flight check">
+              <div className="flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <span className="mono flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-indigo-50 font-semibold text-indigo-700" aria-hidden="true">
+                    1
+                  </span>
+                  <h2 className="section-title text-lg">Pre-flight check</h2>
+                </div>
+                <button type="button" onClick={runPre} disabled={preLoading} className="btn-secondary btn-sm">
+                  {preLoading ? "Checking..." : "Check again"}
+                </button>
               </div>
-            </div>
-            <div>
-              <label className="block text-sm">
-                <span className="block text-xs font-medium text-slate-600">Card for</span>
-                <select
-                  value={who}
-                  onChange={(e) => setWho(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm"
-                >
-                  <option value="sample">A sample card</option>
-                  {people.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.name} ({p.role})
-                    </option>
-                  ))}
-                </select>
-              </label>
-              {summary.total > people.length && (
-                <p className="mt-1 text-xs text-slate-500">Showing the first {people.length} people. Everyone is included in the PDF below.</p>
+              {!pre && <p className="mt-3 text-sm text-slate-500">{preLoading ? "Checking your cards..." : "The check could not run."}</p>}
+              {pre && !pre.items.some((i) => i.level === "warn") && (
+                <p role="status" className="mt-3 flex items-center gap-2 rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+                  <CheckCircle2 className="h-4 w-4 shrink-0" aria-hidden="true" />
+                  <span>Looks good. {pre.checked > 0 ? `All ${pre.checked} cards passed.` : "The design passed."}</span>
+                </p>
               )}
-              {who === "sample" && (
-                <label className="mt-3 block text-sm">
-                  <span className="block text-xs font-medium text-slate-600">Sample role</span>
-                  <select
-                    value={sampleRole}
-                    onChange={(e) => setSampleRole(e.target.value)}
-                    className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm"
-                  >
-                    {roles.map((r) => (
-                      <option key={r} value={r}>
-                        {r}
+              {pre && pre.items.length > 0 && (
+                <ul className="mt-3 space-y-2">
+                  {pre.items.map((item) => (
+                    <li
+                      key={item.title}
+                      className={`rounded-lg border px-3 py-2.5 text-sm ${item.level === "warn" ? "border-amber-200 bg-amber-50 text-amber-900" : "border-slate-200 bg-slate-50 text-slate-700"}`}
+                    >
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className={item.level === "warn" ? "chip-warn" : "chip-info"}>
+                          {item.level === "warn" ? <AlertTriangle className="h-3 w-3" aria-hidden="true" /> : <Info className="h-3 w-3" aria-hidden="true" />}
+                          {item.level === "warn" ? "Warning" : "Note"}
+                        </span>
+                        <p className="font-medium">{item.title}</p>
+                      </div>
+                      <p className="mt-1 text-xs">{item.detail}</p>
+                      {item.examples && <p className="mono mt-1 text-slate-600">{item.examples.join(", ")}</p>}
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {pre?.items.some((i) => i.level === "warn") && (
+                <p className="mt-3 text-xs text-slate-500">
+                  You can still download.{" "}
+                  <Link href={`/projects/${id}/editor`} className="font-medium text-indigo-600 underline">
+                    Fix in the editor
+                  </Link>{" "}
+                  and press Check again.
+                </p>
+              )}
+            </section>
+
+            <label className="card flex items-start gap-3 p-4 text-sm">
+              <input type="checkbox" checked={printReady} onChange={(e) => setPrintReady(e.target.checked)} className="mt-1 h-4 w-4 accent-indigo-600" />
+              <span>
+                <span className="font-medium">Print-ready PDF and SVG</span>
+                <span className="block text-xs text-slate-600">
+                  Adds a 3 mm bleed (colour that runs past the cut line) and crop marks, which print shops ask for. Leave it off to print on an office printer. PNG is never changed.
+                </span>
+              </span>
+            </label>
+
+            <section className="card-pad">
+              <SectionHead n="2" title="One card" tag={<span className="mono hidden text-slate-500 sm:inline">54 × 85.6 mm</span>} />
+              <div className="mt-4 max-w-md">
+                <label className="block text-sm">
+                  <span className="field-label">Card for</span>
+                  <select value={who} onChange={(e) => setWho(e.target.value)} className="field">
+                    <option value="sample">A sample card</option>
+                    {people.map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name} ({p.role})
                       </option>
                     ))}
                   </select>
                 </label>
-              )}
-              {previewNotes.length > 0 && (
-                <ul className="mt-3 list-disc pl-5 text-xs text-amber-700">
-                  {previewNotes.map((n) => (
-                    <li key={n}>{n}</li>
-                  ))}
-                </ul>
-              )}
+                {summary.total > people.length && (
+                  <p className="mt-1 text-xs text-slate-500">Showing the first {people.length} people. Everyone is included in the PDF below.</p>
+                )}
+                {who === "sample" && (
+                  <label className="mt-3 block text-sm">
+                    <span className="field-label">Sample role</span>
+                    <select value={sampleRole} onChange={(e) => setSampleRole(e.target.value)} className="field">
+                      {roles.map((r) => (
+                        <option key={r} value={r}>
+                          {r}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                )}
+                {previewNotes.length > 0 && (
+                  <ul className="mt-3 list-disc pl-5 text-xs text-amber-700">
+                    {previewNotes.map((n) => (
+                      <li key={n}>{n}</li>
+                    ))}
+                  </ul>
+                )}
+                <label className="mt-3 block text-sm sm:max-w-[240px]">
+                  <span className="field-label">PNG quality</span>
+                  <select value={dpi} onChange={(e) => setDpi(e.target.value)} className="field">
+                    <option value="150">150 dpi (screen)</option>
+                    <option value="300">300 dpi (print)</option>
+                    <option value="600">600 dpi (very sharp)</option>
+                  </select>
+                </label>
+              </div>
               <div className="mt-4 flex flex-wrap gap-2">
                 {FORMATS.map((f) => (
                   <button
@@ -338,165 +357,188 @@ export default function ExportPage() {
                   </button>
                 ))}
               </div>
-              <label className="mt-3 block max-w-[220px] text-sm">
-                <span className="block text-xs font-medium text-slate-600">PNG quality</span>
-                <select value={dpi} onChange={(e) => setDpi(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm">
-                  <option value="150">150 dpi (screen)</option>
-                  <option value="300">300 dpi (print)</option>
-                  <option value="600">600 dpi (very sharp)</option>
-                </select>
-              </label>
-              <p className="mt-2 text-xs text-slate-500">PDF: for printing. PNG: an image at the dpi above. SVG: for design tools.</p>
-            </div>
-          </div>
-        </section>
+              <p className="mt-3 text-xs text-slate-500">PDF: for printing. PNG: an image at the dpi above. SVG: for design tools.</p>
+            </section>
 
-        <section className="mt-6 rounded-xl border border-slate-200 bg-white p-5">
-          <h2 className="text-lg font-semibold">Everyone</h2>
-          {summary.total === 0 ? (
-            <p className="mt-2 text-sm text-slate-600">
-              No people yet.{" "}
-              <Link href={`/projects/${id}/people`} className="font-medium text-indigo-600 underline">
-                Add people from a CSV
-              </Link>{" "}
-              to make a card for each of them.
-            </p>
-          ) : (
-            <>
-              <label className="mt-3 block max-w-xs text-sm">
-                <span className="block text-xs font-medium text-slate-600">Which people</span>
-                <select
-                  value={roleFilter}
-                  onChange={(e) => setRoleFilter(e.target.value)}
-                  className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm"
-                >
-                  <option value="">Everyone ({summary.total})</option>
-                  {roles
-                    .filter((r) => summary.byRole[r])
-                    .map((r) => (
-                      <option key={r} value={r}>
-                        Only {r} ({summary.byRole[r]})
-                      </option>
-                    ))}
-                </select>
-              </label>
-
-              <h3 className="mt-5 text-sm font-semibold">One card per page</h3>
-              <p className="text-xs text-slate-600">One PDF, one card per page, in role and name order. Uses the print-ready option above.</p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                {Array.from({ length: parts }, (_, i) => {
-                  const from = i * PART_SIZE + 1;
-                  const to = Math.min(count, (i + 1) * PART_SIZE);
-                  const label = parts === 1 ? `PDF of ${count} ${count === 1 ? "card" : "cards"}` : `PDF part ${i + 1} (cards ${from}-${to})`;
-                  return (
-                    <button
-                      key={i}
-                      type="button"
-                      disabled={!!busy || needsDesign}
-                      onClick={() => download(`format=pdf&all=1&part=${i + 1}${roleQuery}${printQuery}`, `part${i}`)}
-                      className={btnPrimary}
-                    >
-                      {busy === `part${i}` ? "Preparing..." : `Download ${label}`}
-                    </button>
-                  );
-                })}
-              </div>
-              {parts > 1 && (
-                <p className="mt-2 text-xs text-slate-500">
-                  Big lists are split into files of {PART_SIZE} cards so the download stays fast. Each file takes a few seconds to prepare.
+            <section className="card-pad">
+              <SectionHead
+                n="3"
+                title="Everyone"
+                tag={summary.total > 0 ? <span className="chip-neutral mono">{summary.total} people</span> : null}
+              />
+              {summary.total === 0 ? (
+                <p className="mt-3 text-sm text-slate-600">
+                  No people yet.{" "}
+                  <Link href={`/projects/${id}/people`} className="font-medium text-indigo-600 underline">
+                    Add people from a CSV
+                  </Link>{" "}
+                  to make a card for each of them.
                 </p>
-              )}
-
-              <h3 className="mt-6 text-sm font-semibold">Print sheets</h3>
-              <p className="text-xs text-slate-600">Many cards on each A4 or A3 page, with cut marks in the margin. Print it at 100% size, not fit to page.</p>
-              <div className="mt-3 grid gap-3 sm:grid-cols-2">
-                <label className="block text-sm">
-                  <span className="block text-xs font-medium text-slate-600">Paper</span>
-                  <select value={paper} onChange={(e) => setPaper(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm">
-                    <option value="a4">A4</option>
-                    <option value="a3">A3</option>
-                  </select>
-                </label>
-                <label className="block text-sm">
-                  <span className="block text-xs font-medium text-slate-600">Page direction</span>
-                  <select value={orientation} onChange={(e) => setOrientation(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm">
-                    <option value="auto">Automatic (fits the most cards)</option>
-                    <option value="portrait">Portrait</option>
-                    <option value="landscape">Landscape</option>
-                  </select>
-                </label>
-              </div>
-              <label className="mt-3 flex items-start gap-2 text-sm">
-                <input type="checkbox" checked={sheetBleed} onChange={(e) => setSheetBleed(e.target.checked)} className="mt-1 h-4 w-4" />
-                <span>
-                  Add a 3 mm bleed
-                  <span className="block text-xs text-slate-500">For a print shop. Cards touch and are cut along the marks. Off: cards have a 4 mm gap for cutting by hand.</span>
-                </span>
-              </label>
-              <label className="mt-2 flex items-start gap-2 text-sm">
-                <input type="checkbox" checked={byRole} onChange={(e) => setByRole(e.target.checked)} className="mt-1 h-4 w-4" />
-                <span>
-                  Start a new sheet for each role
-                  <span className="block text-xs text-slate-500">Handy for printing roles on different paper, or handing out one pile per role.</span>
-                </span>
-              </label>
-              {sheetInfo ? (
+              ) : (
                 <>
-                  <p className="mt-3 text-sm text-slate-700">
-                    {sheetInfo.perSheet} cards per sheet ({sheetInfo.cols} × {sheetInfo.rows}, {sheetInfo.orientation}) · {sheetInfo.sheets} {sheetInfo.sheets === 1 ? "sheet" : "sheets"}
-                    {sheetInfo.parts > 1 ? ` in ${sheetInfo.parts} files` : ""}
-                  </p>
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {Array.from({ length: sheetInfo.parts }, (_, i) => {
-                      const from = i * sheetInfo.pagesPerFile + 1;
-                      const to = Math.min(sheetInfo.sheets, (i + 1) * sheetInfo.pagesPerFile);
-                      const label = sheetInfo.parts === 1 ? `Download ${sheetInfo.sheets} ${sheetInfo.sheets === 1 ? "sheet" : "sheets"} (PDF)` : `Download sheets ${from}-${to} (PDF)`;
-                      return (
-                        <button
-                          key={i}
-                          type="button"
-                          disabled={!!busy || needsDesign}
-                          onClick={() => download(`format=pdf&${sheetQuery}&part=${i + 1}`, `sheet${i}`)}
-                          className={btnPrimary}
-                        >
-                          {busy === `sheet${i}` ? "Preparing..." : label}
-                        </button>
-                      );
-                    })}
+                  <label className="mt-3 block max-w-xs text-sm">
+                    <span className="field-label">Which people</span>
+                    <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)} className="field">
+                      <option value="">Everyone ({summary.total})</option>
+                      {roles
+                        .filter((r) => summary.byRole[r])
+                        .map((r) => (
+                          <option key={r} value={r}>
+                            Only {r} ({summary.byRole[r]})
+                          </option>
+                        ))}
+                    </select>
+                  </label>
+
+                  <div className="mt-5 rounded-lg border border-slate-200 bg-slate-50 p-4">
+                    <h3 className="text-sm font-semibold">One card per page</h3>
+                    <p className="text-xs text-slate-600">One PDF, one card per page, in role and name order. Uses the print-ready option above.</p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {Array.from({ length: parts }, (_, i) => {
+                        const from = i * PART_SIZE + 1;
+                        const to = Math.min(count, (i + 1) * PART_SIZE);
+                        const label = parts === 1 ? `PDF of ${count} ${count === 1 ? "card" : "cards"}` : `PDF part ${i + 1} (cards ${from}-${to})`;
+                        return (
+                          <button
+                            key={i}
+                            type="button"
+                            disabled={!!busy || needsDesign}
+                            onClick={() => download(`format=pdf&all=1&part=${i + 1}${roleQuery}${printQuery}`, `part${i}`)}
+                            className={btnPrimary}
+                          >
+                            {busy === `part${i}` ? "Preparing..." : `Download ${label}`}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {parts > 1 && (
+                      <p className="mt-2 text-xs text-slate-500">
+                        Big lists are split into files of {PART_SIZE} cards so the download stays fast. Each file takes a few seconds to prepare.
+                      </p>
+                    )}
                   </div>
                 </>
-              ) : (
-                <p className="mt-3 text-sm text-slate-500">Working out the layout...</p>
               )}
-            </>
-          )}
-        </section>
+            </section>
 
-        {busy && (
-          <p role="status" className="mt-4 text-sm text-slate-600">
-            Preparing your file. The first one can take around 10 seconds.
-          </p>
-        )}
-        {done && (
-          <p role="status" className="mt-4 rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-            {done}
-          </p>
-        )}
-        {fileNotes.length > 0 && (
-          <ul className="mt-2 list-disc pl-5 text-xs text-amber-700">
-            {fileNotes.map((n) => (
-              <li key={n}>{n}</li>
-            ))}
-          </ul>
-        )}
+            {summary.total > 0 && (
+              <section className="card-pad">
+                <SectionHead n="4" title="Print sheets" tag={<span className="chip-neutral mono">A4 / A3</span>} />
+                <p className="mt-2 text-xs text-slate-600">Many cards on each A4 or A3 page, with cut marks in the margin. Print it at 100% size, not fit to page.</p>
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <label className="block text-sm">
+                    <span className="field-label">Paper</span>
+                    <select value={paper} onChange={(e) => setPaper(e.target.value)} className="field">
+                      <option value="a4">A4</option>
+                      <option value="a3">A3</option>
+                    </select>
+                  </label>
+                  <label className="block text-sm">
+                    <span className="field-label">Page direction</span>
+                    <select value={orientation} onChange={(e) => setOrientation(e.target.value)} className="field">
+                      <option value="auto">Automatic (fits the most cards)</option>
+                      <option value="portrait">Portrait</option>
+                      <option value="landscape">Landscape</option>
+                    </select>
+                  </label>
+                </div>
+                <label className="mt-3 flex items-start gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm">
+                  <input type="checkbox" checked={sheetBleed} onChange={(e) => setSheetBleed(e.target.checked)} className="mt-1 h-4 w-4 accent-indigo-600" />
+                  <span>
+                    Add a 3 mm bleed
+                    <span className="block text-xs text-slate-500">For a print shop. Cards touch and are cut along the marks. Off: cards have a 4 mm gap for cutting by hand.</span>
+                  </span>
+                </label>
+                <label className="mt-2 flex items-start gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm">
+                  <input type="checkbox" checked={byRole} onChange={(e) => setByRole(e.target.checked)} className="mt-1 h-4 w-4 accent-indigo-600" />
+                  <span>
+                    Start a new sheet for each role
+                    <span className="block text-xs text-slate-500">Handy for printing roles on different paper, or handing out one pile per role.</span>
+                  </span>
+                </label>
+                {sheetInfo ? (
+                  <>
+                    <p className="mono mt-3 rounded-lg bg-indigo-50 px-3 py-2 text-slate-700">
+                      {sheetInfo.perSheet} cards per sheet ({sheetInfo.cols} × {sheetInfo.rows}, {sheetInfo.orientation}) · {sheetInfo.sheets} {sheetInfo.sheets === 1 ? "sheet" : "sheets"}
+                      {sheetInfo.parts > 1 ? ` in ${sheetInfo.parts} files` : ""}
+                    </p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {Array.from({ length: sheetInfo.parts }, (_, i) => {
+                        const from = i * sheetInfo.pagesPerFile + 1;
+                        const to = Math.min(sheetInfo.sheets, (i + 1) * sheetInfo.pagesPerFile);
+                        const label = sheetInfo.parts === 1 ? `Download ${sheetInfo.sheets} ${sheetInfo.sheets === 1 ? "sheet" : "sheets"} (PDF)` : `Download sheets ${from}-${to} (PDF)`;
+                        return (
+                          <button
+                            key={i}
+                            type="button"
+                            disabled={!!busy || needsDesign}
+                            onClick={() => download(`format=pdf&${sheetQuery}&part=${i + 1}`, `sheet${i}`)}
+                            className={btnPrimary}
+                          >
+                            {busy === `sheet${i}` ? "Preparing..." : label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </>
+                ) : (
+                  <p className="mt-3 text-sm text-slate-500">Working out the layout...</p>
+                )}
+              </section>
+            )}
 
-        <div className="mt-8 flex items-center justify-between text-sm">
-          <Link href={`/projects/${id}/people`} className="font-medium text-indigo-600 hover:underline">
-            Back to the people
-          </Link>
-          <Link href={`/projects/${id}/editor`} className="font-medium text-indigo-600 hover:underline">
-            Back to the editor
-          </Link>
+            {busy && (
+              <p role="status" className="text-sm text-slate-600">
+                Preparing your file. The first one can take around 10 seconds.
+              </p>
+            )}
+            {done && (
+              <p role="status" className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+                {done}
+              </p>
+            )}
+            {fileNotes.length > 0 && (
+              <ul className="list-disc pl-5 text-xs text-amber-700">
+                {fileNotes.map((n) => (
+                  <li key={n}>{n}</li>
+                ))}
+              </ul>
+            )}
+
+            <div className="flex items-center justify-between text-sm">
+              <Link href={`/projects/${id}/people`} className="font-medium text-indigo-600 hover:underline">
+                Back to the people
+              </Link>
+              <Link href={`/projects/${id}/editor`} className="font-medium text-indigo-600 hover:underline">
+                Back to the editor
+              </Link>
+            </div>
+          </div>
+
+          <aside className="lg:col-start-2 lg:row-start-1 lg:sticky lg:top-6">
+            <div className="card-pad">
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="section-title">Live preview</h2>
+                <span className="chip-neutral mono">{printReady ? "3 mm bleed + marks" : "Trimmed"}</span>
+              </div>
+              <div className="mt-4 rounded-lg bg-slate-100 p-5">
+                <div className="card-stage mx-auto w-full max-w-[240px]" style={{ aspectRatio: printReady ? "660 / 976" : "540 / 856" }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  {previewUrl && <img src={previewUrl} alt="Preview of the card" className={`block h-full w-full ${previewing ? "opacity-50" : ""}`} />}
+                </div>
+              </div>
+              <dl className="mono mt-3 grid grid-cols-2 gap-2 text-slate-600">
+                <div>
+                  <dt className="text-[10px] uppercase text-slate-400">Size</dt>
+                  <dd>54 × 85.6 mm</dd>
+                </div>
+                <div>
+                  <dt className="text-[10px] uppercase text-slate-400">Colour</dt>
+                  <dd>RGB</dd>
+                </div>
+              </dl>
+            </div>
+          </aside>
         </div>
       </div>
     </main>

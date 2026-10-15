@@ -2,10 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-
-const btn = "rounded-lg px-3 py-1.5 text-sm font-medium transition disabled:cursor-not-allowed disabled:opacity-50";
-const btnPrimary = `${btn} bg-indigo-600 text-white hover:bg-indigo-700`;
-const btnLight = `${btn} border border-slate-300 bg-white text-slate-800 hover:bg-slate-100`;
+import { Download, Trash2 } from "lucide-react";
 
 export default function TemplatesPage() {
   const [templates, setTemplates] = useState(null);
@@ -91,57 +88,64 @@ export default function TemplatesPage() {
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
-      <div className="mx-auto max-w-5xl px-4 py-10">
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:py-10">
         <nav className="flex gap-4 text-sm font-medium text-indigo-600">
           <Link href="/" className="hover:underline">Home</Link>
           <Link href="/brand-kits" className="hover:underline">Brand kits</Link>
           <span className="text-slate-900">Templates</span>
         </nav>
-        <h1 className="mt-4 text-2xl font-bold">Templates</h1>
-        <p className="mt-1 text-slate-600">
+        <p className="eyebrow mt-6">Card layouts · CR80 54 x 85.6 mm</p>
+        <h1 className="page-title mt-1">Templates</h1>
+        <p className="page-sub max-w-2xl">
           A template is a card layout. Every event starts from the built-in ones, and you can add your own without changing any code.
         </p>
 
-        {error && <p role="alert" className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
-        {notice && <p role="status" className="mt-4 rounded-lg bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{notice}</p>}
+        {error && <p role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
+        {notice && <p role="status" className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">{notice}</p>}
         {!templates && !error && <p className="mt-6 text-sm text-slate-500">Loading...</p>}
 
         {templates && (
           <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {templates.map((t) => (
-              <section key={t.id} className="flex flex-col rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
-                <div className="flex items-center justify-between gap-2">
-                  <h2 className="font-semibold">{t.name}</h2>
-                  <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${t.builtIn ? "bg-slate-100 text-slate-600" : "bg-indigo-100 text-indigo-700"}`}>
-                    {t.builtIn ? "Built-in" : "Yours"}
-                  </span>
+              <section key={t.id} className="card flex flex-col overflow-hidden transition hover:shadow-md">
+                <div className="bg-indigo-50/60 p-4 ring-1 ring-inset ring-indigo-100">
+                  <div
+                    className="card-stage mx-auto w-full max-w-[200px] [&>svg]:block [&>svg]:h-auto [&>svg]:w-full"
+                    role="img"
+                    aria-label={`${t.name} template preview`}
+                    dangerouslySetInnerHTML={{ __html: t.svg }}
+                  />
                 </div>
-                <div
-                  className="mx-auto mt-3 w-full max-w-[200px] overflow-hidden rounded-md shadow-md ring-1 ring-slate-200 [&>svg]:block [&>svg]:h-auto [&>svg]:w-full"
-                  role="img"
-                  aria-label={`${t.name} template preview`}
-                  dangerouslySetInnerHTML={{ __html: t.svg }}
-                />
-                <p className="mt-3 text-xs text-slate-500">
-                  {t.json.layers.length} layers · used in {t.usedBy} {t.usedBy === 1 ? "design" : "designs"}
-                </p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  <button type="button" onClick={() => download(t)} className={btnLight}>
-                    Download JSON
-                  </button>
-                  {!t.builtIn && (
-                    <button type="button" onClick={() => remove(t)} className={btnLight}>
-                      Delete
+                <div className="flex flex-1 flex-col p-4">
+                  <div className="flex items-center justify-between gap-2">
+                    <h2 className="section-title">{t.name}</h2>
+                    <span className={t.builtIn ? "chip-neutral" : "chip-info"}>
+                      {t.builtIn ? "Built-in" : "Yours"}
+                    </span>
+                  </div>
+                  <p className="mono mt-2 text-slate-500">
+                    {t.json.layers.length} layers · used in {t.usedBy} {t.usedBy === 1 ? "design" : "designs"}
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    <button type="button" onClick={() => download(t)} className="btn-secondary btn-sm">
+                      <Download className="h-3.5 w-3.5" aria-hidden="true" />
+                      Download JSON
                     </button>
-                  )}
+                    {!t.builtIn && (
+                      <button type="button" onClick={() => remove(t)} className="btn-danger btn-sm">
+                        <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
+                        Delete
+                      </button>
+                    )}
+                  </div>
                 </div>
               </section>
             ))}
           </div>
         )}
 
-        <section className="mt-8 rounded-xl border border-slate-200 bg-white p-5">
-          <h2 className="text-lg font-semibold">Add a template</h2>
+        <section className="card-pad mt-8 sm:p-6">
+          <h2 className="section-title text-lg">Add a template</h2>
           <ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-slate-600">
             <li>Download a built-in template above (Download JSON).</li>
             <li>Change it in any text editor: positions, sizes, colours, text, or add and remove layers.</li>
@@ -151,32 +155,37 @@ export default function TemplatesPage() {
             You can also save a design from the editor as a template: open the editor and use &quot;Save as template&quot;.
           </p>
           <label className="mt-4 block max-w-sm text-sm">
-            <span className="block text-xs font-medium text-slate-600">Template name</span>
-            <input value={name} onChange={(e) => setName(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm" placeholder="e.g. Workshop badge" />
+            <span className="field-label">Template name</span>
+            <input value={name} onChange={(e) => setName(e.target.value)} className="field" placeholder="e.g. Workshop badge" />
           </label>
           <label className="mt-3 block text-sm">
-            <span className="block text-xs font-medium text-slate-600">Template file (.json)</span>
-            <input type="file" accept="application/json,.json" onChange={(e) => readFile(e.target.files?.[0])} className="mt-1 text-xs" />
+            <span className="field-label">Template file (.json)</span>
+            <input
+              type="file"
+              accept="application/json,.json"
+              onChange={(e) => readFile(e.target.files?.[0])}
+              className="text-xs text-slate-600 file:mr-3 file:rounded-lg file:border file:border-slate-300 file:bg-white file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-slate-700 hover:file:bg-slate-50"
+            />
           </label>
           <label className="mt-3 block text-sm">
-            <span className="block text-xs font-medium text-slate-600">or paste the JSON</span>
+            <span className="field-label">or paste the JSON</span>
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
               rows={6}
               spellCheck={false}
-              className="mt-1 w-full rounded-lg border border-slate-300 bg-white p-2 font-mono text-xs"
+              className="field font-mono text-xs"
               placeholder='{ "canvas": { "width": 540, "height": 856, "background": "#ffffff" }, "roleColors": { ... }, "layers": [ ... ] }'
             />
           </label>
           {problems.length > 0 && (
-            <ul className="mt-3 list-disc space-y-1 rounded-lg bg-amber-50 py-2 pl-7 pr-3 text-xs text-amber-900">
+            <ul className="mt-3 list-disc space-y-1 rounded-lg border border-amber-200 bg-amber-50 py-2 pl-7 pr-3 text-xs text-amber-900">
               {problems.map((p) => (
                 <li key={p}>{p}</li>
               ))}
             </ul>
           )}
-          <button type="button" onClick={add} disabled={adding || !text.trim()} className={`${btnPrimary} mt-4`}>
+          <button type="button" onClick={add} disabled={adding || !text.trim()} className="btn-primary mt-4">
             {adding ? "Checking..." : "Add template"}
           </button>
         </section>

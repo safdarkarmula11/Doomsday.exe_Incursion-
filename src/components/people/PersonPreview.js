@@ -51,7 +51,7 @@ export default function PersonPreview({ projectId, people }) {
 
   if (problem) {
     return (
-      <p className="rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800">
+      <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
         {problem}{" "}
         <Link href={`/projects/${projectId}/drafts`} className="font-medium underline">
           Go to the designs
@@ -62,20 +62,20 @@ export default function PersonPreview({ projectId, people }) {
   if (!out) return <p className="text-sm text-slate-500">Loading the card...</p>;
 
   return (
-    <div className="grid gap-4 sm:grid-cols-[220px_1fr] sm:items-start">
+    <div className="grid gap-4">
       <div
-        className="mx-auto w-full max-w-[220px] overflow-hidden rounded-md shadow-md ring-1 ring-slate-200 [&>svg]:block [&>svg]:h-auto [&>svg]:w-full"
+        className="card-stage mx-auto w-full max-w-[240px] [&>svg]:block [&>svg]:h-auto [&>svg]:w-full"
         role="img"
         aria-label={`Card for ${person.name}`}
         dangerouslySetInnerHTML={{ __html: out.svg }}
       />
       <div>
         <label className="block text-sm">
-          <span className="block text-xs font-medium text-slate-600">See the card for</span>
+          <span className="field-label">See the card for</span>
           <select
             value={index}
             onChange={(e) => setIndex(Number(e.target.value))}
-            className="mt-1 w-full rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm"
+            className="field"
           >
             {people.map((p, i) => (
               <option key={p.id} value={i}>
@@ -85,7 +85,7 @@ export default function PersonPreview({ projectId, people }) {
           </select>
         </label>
         {notes.length > 0 && (
-          <ul className="mt-3 list-disc pl-5 text-xs text-amber-700">
+          <ul className="mt-3 list-disc rounded-lg border border-amber-200 bg-amber-50 py-2 pl-7 pr-3 text-xs text-amber-700">
             {notes.map((n) => (
               <li key={n}>{n}</li>
             ))}
@@ -93,7 +93,7 @@ export default function PersonPreview({ projectId, people }) {
         )}
         <p className="mt-3 text-xs text-slate-500">
           Not happy with it?{" "}
-          <Link href={`/projects/${projectId}/editor`} className="font-medium text-indigo-600 underline">
+          <Link href={`/projects/${projectId}/editor`} className="font-medium text-indigo-700 underline">
             Go back to the editor
           </Link>
         </p>

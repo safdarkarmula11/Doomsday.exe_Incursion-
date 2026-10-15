@@ -88,14 +88,15 @@ export default function PeoplePage() {
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
-      <div className="mx-auto max-w-4xl px-4 py-10">
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:py-10">
         <Stepper current={4} />
 
-        <h1 className="text-2xl font-bold">Add your people</h1>
-        <p className="mt-1 text-slate-600">One card is made for each person in your list.</p>
+        <p className="eyebrow mt-2">Step 5 of 6</p>
+        <h1 className="page-title mt-1">Add your people</h1>
+        <p className="page-sub">One card is made for each person in your list.</p>
 
         {error && (
-          <div role="alert" className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}{" "}
             {needsDetails && (
               <Link href={`/projects/${id}/questions`} className="font-medium underline">
@@ -105,7 +106,7 @@ export default function PeoplePage() {
           </div>
         )}
         {notice && (
-          <p role="status" className="mt-4 rounded-lg bg-green-50 px-4 py-3 text-sm text-green-800">
+          <p role="status" className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
             {notice}
           </p>
         )}
@@ -115,7 +116,7 @@ export default function PeoplePage() {
         {summary && (!hasPeople || replacing) && (
           <div className="mt-6">
             {replacing && (
-              <button type="button" onClick={() => setReplacing(false)} className="mb-3 text-sm font-medium text-indigo-600 underline">
+              <button type="button" onClick={() => setReplacing(false)} className="btn-ghost btn-sm mb-3 text-indigo-700">
                 Cancel and keep the current list
               </button>
             )}
@@ -125,79 +126,84 @@ export default function PeoplePage() {
 
         {hasPeople && !replacing && (
           <div className="mt-6 space-y-6">
-            <section className="rounded-xl border border-slate-200 bg-white p-4" aria-label="Who is in the list">
+            <section className="card-pad" aria-label="Who is in the list">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
-                  <p className="text-lg font-semibold">
-                    {summary.total} {summary.total === 1 ? "person" : "people"}
+                  <p className="font-display text-lg font-semibold">
+                    <span className="font-mono">{summary.total}</span> {summary.total === 1 ? "person" : "people"}
                   </p>
                   <div className="mt-2 flex flex-wrap gap-2">
                     {Object.entries(summary.byRole).map(([r, n]) => (
-                      <span key={r} className="rounded-full bg-slate-100 px-2.5 py-0.5 text-xs capitalize text-slate-700">
+                      <span key={r} className="chip-info capitalize">
                         {r}: {n}
                       </span>
                     ))}
                   </div>
                 </div>
-                <div className="flex gap-3 text-sm">
-                  <button type="button" onClick={() => setReplacing(true)} className="font-medium text-indigo-600 underline">
+                <div className="flex flex-wrap gap-2">
+                  <button type="button" onClick={() => setReplacing(true)} className="btn-secondary btn-sm">
                     Replace with a new CSV
                   </button>
-                  <button type="button" onClick={removeAll} className="text-slate-500 underline hover:text-red-600">
+                  <button type="button" onClick={removeAll} className="btn-danger btn-sm">
                     Remove everyone
                   </button>
                 </div>
               </div>
             </section>
 
-            <section className="rounded-xl border border-slate-200 bg-white p-4" aria-label="Card preview">
-              <h2 className="font-semibold">How the cards will look</h2>
-              <div className="mt-3">
-                <PersonPreview projectId={id} people={people} />
-              </div>
-            </section>
-
-            <section className="rounded-xl border border-slate-200 bg-white p-4" aria-label="People">
-              <h2 className="font-semibold">The list</h2>
-              <div className="mt-2 overflow-x-auto">
-                <table className="w-full min-w-[480px] text-left text-sm">
-                  <thead className="text-xs uppercase text-slate-500">
-                    <tr>
-                      <th className="py-1 pr-3">Name</th>
-                      <th className="py-1 pr-3">Role</th>
-                      <th className="py-1 pr-3">ID</th>
-                      <th className="py-1">Photo</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {people.map((p) => (
-                      <tr key={p.id}>
-                        <td className="py-1.5 pr-3">{p.name}</td>
-                        <td className="py-1.5 pr-3 capitalize">{p.role}</td>
-                        <td className="py-1.5 pr-3 font-mono text-xs">{p.externalId}</td>
-                        <td className="py-1.5 text-xs text-slate-500">{p.photoUrl ? "yes" : "none"}</td>
+            <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
+              <section className="card order-2 overflow-hidden lg:order-1" aria-label="People">
+                <div className="border-b border-slate-200 bg-slate-50 px-4 py-3">
+                  <h2 className="section-title">The list</h2>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[480px] text-left text-sm">
+                    <thead className="bg-slate-50 font-mono text-[11px] uppercase tracking-wider text-slate-500">
+                      <tr>
+                        <th className="px-4 py-2 font-medium">Name</th>
+                        <th className="px-3 py-2 font-medium">Role</th>
+                        <th className="px-3 py-2 font-medium">ID</th>
+                        <th className="px-4 py-2 font-medium">Photo</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-              {people.length < summary.total && (
-                <button type="button" onClick={more} className="mt-3 text-sm font-medium text-indigo-600 underline">
-                  Show more ({summary.total - people.length} left)
-                </button>
-              )}
-            </section>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100">
+                      {people.map((p) => (
+                        <tr key={p.id} className="hover:bg-slate-50">
+                          <td className="px-4 py-2 font-medium text-slate-900">{p.name}</td>
+                          <td className="px-3 py-2 capitalize">
+                            <span className="chip-info">{p.role}</span>
+                          </td>
+                          <td className="px-3 py-2 font-mono text-xs">{p.externalId}</td>
+                          <td className="px-4 py-2 text-xs text-slate-500">{p.photoUrl ? "yes" : "none"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                {people.length < summary.total && (
+                  <div className="border-t border-slate-200 bg-slate-50 px-4 py-3">
+                    <button type="button" onClick={more} className="btn-secondary btn-sm">
+                      Show more ({summary.total - people.length} left)
+                    </button>
+                  </div>
+                )}
+              </section>
+
+              <section className="card-pad order-1 lg:sticky lg:top-20 lg:order-2" aria-label="Card preview">
+                <h2 className="section-title">How the cards will look</h2>
+                <div className="mt-3 rounded-lg bg-slate-100 p-3">
+                  <PersonPreview projectId={id} people={people} />
+                </div>
+              </section>
+            </div>
           </div>
         )}
 
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-6">
-          <Link href={`/projects/${id}/editor`} className="text-sm font-medium text-indigo-600 hover:underline">
+        <div className="card mt-8 flex flex-wrap items-center justify-between gap-3 px-5 py-4">
+          <Link href={`/projects/${id}/editor`} className="btn-secondary">
             Back to the editor
           </Link>
-          <Link
-            href={`/projects/${id}/export`}
-            className="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700"
-          >
+          <Link href={`/projects/${id}/export`} className="btn-primary px-5 py-2.5">
             {hasPeople ? "Continue to export" : "Skip for now"}
           </Link>
         </div>

@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import Stepper from "@/components/wizard/Stepper";
 import {
   FIELD_OPTIONS,
@@ -13,10 +14,10 @@ import {
 } from "@/lib/eventData";
 
 const TONES = {
-  green: "bg-green-100 text-green-800",
-  amber: "bg-amber-100 text-amber-800",
-  red: "bg-red-100 text-red-800",
-  gray: "bg-slate-100 text-slate-600",
+  green: "chip-ok",
+  amber: "chip-warn",
+  red: "chip-error",
+  gray: "chip-neutral",
 };
 
 /** The little label next to each field: what we found, what needs checking, what is missing. */
@@ -36,12 +37,12 @@ function Field({ id, label, badge, error, hint, children }) {
   return (
     <div>
       <div className="flex items-center justify-between gap-2">
-        <label htmlFor={id} className="text-sm font-medium">
+        <label htmlFor={id} className="field-label !mb-0">
           {label}
         </label>
-        {badge && <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${TONES[badge.tone]}`}>{badge.text}</span>}
+        {badge && <span className={TONES[badge.tone]}>{badge.text}</span>}
       </div>
-      <div className="mt-1.5">{children}</div>
+      <div className="mt-1">{children}</div>
       {hint && !error && <p className="mt-1 text-xs text-slate-500">{hint}</p>}
       {error && (
         <p role="alert" className="mt-1 text-xs font-medium text-red-600">
@@ -53,9 +54,7 @@ function Field({ id, label, badge, error, hint, children }) {
 }
 
 const inputClass = (hasError) =>
-  `w-full rounded-lg border px-3 py-2 text-sm outline-none focus:ring-2 ${
-    hasError ? "border-red-400 focus:ring-red-100" : "border-slate-300 focus:border-indigo-500 focus:ring-indigo-200"
-  }`;
+  `field ${hasError ? "!border-red-400 bg-red-50/40" : ""}`;
 
 export default function QuestionsPage() {
   const { id } = useParams();
@@ -127,7 +126,7 @@ export default function QuestionsPage() {
 
   if (loadError) {
     return (
-      <main className="min-h-screen bg-slate-50 text-slate-900">
+      <main className="min-h-screen text-slate-900">
         <div className="mx-auto max-w-2xl px-4 py-10">
           <p role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
             {loadError}
@@ -142,7 +141,7 @@ export default function QuestionsPage() {
 
   if (!form) {
     return (
-      <main className="min-h-screen bg-slate-50 text-slate-900">
+      <main className="min-h-screen text-slate-900">
         <div className="mx-auto max-w-2xl px-4 py-10 text-sm text-slate-500">Loading...</div>
       </main>
     );
@@ -158,12 +157,13 @@ export default function QuestionsPage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
-      <div className="mx-auto max-w-2xl px-4 py-10">
+    <main className="min-h-screen text-slate-900">
+      <div className="mx-auto max-w-3xl px-4 py-8 sm:py-10">
         <Stepper current={1} />
 
-        <h1 className="text-2xl font-bold">Check the details</h1>
-        <p className="mt-1 text-slate-600">
+        <p className="eyebrow mt-6">Step 2 / Questions</p>
+        <h1 className="page-title mt-1">Check the details</h1>
+        <p className="page-sub">
           Here is what we understood. Fix anything that is wrong and fill in what is missing.
         </p>
 
@@ -174,13 +174,13 @@ export default function QuestionsPage() {
         )}
 
         {meta?.request && (
-          <details className="mt-4 rounded-lg border border-slate-200 bg-white px-4 py-3 text-sm">
+          <details className="card mt-4 px-4 py-3 text-sm">
             <summary className="cursor-pointer font-medium text-slate-700">Your request</summary>
             <p className="mt-2 text-slate-600">{meta.request}</p>
           </details>
         )}
 
-        <form onSubmit={save} noValidate className="mt-6 space-y-6 rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+        <form onSubmit={save} noValidate className="card-pad mt-6 space-y-6 sm:p-6">
           <Field id="eventName" label="Event name" badge={badgeFor("eventName", meta, filled)} error={errors.eventName}>
             <input
               id="eventName"
@@ -258,7 +258,7 @@ export default function QuestionsPage() {
                     type="button"
                     onClick={() => removeRole(i)}
                     aria-label={`Remove role ${i + 1}`}
-                    className="rounded-lg border border-slate-300 px-3 text-slate-500 hover:bg-slate-50"
+                    className="btn-secondary !px-3 !text-slate-500"
                   >
                     &times;
                   </button>
@@ -271,7 +271,7 @@ export default function QuestionsPage() {
                   key={p}
                   type="button"
                   onClick={() => addRole(p)}
-                  className="rounded-full border border-slate-300 px-3 py-1 text-xs text-slate-600 hover:border-indigo-400 hover:bg-indigo-50"
+                  className="rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-600 transition hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-700"
                 >
                   + {p}
                 </button>
@@ -279,7 +279,7 @@ export default function QuestionsPage() {
               <button
                 type="button"
                 onClick={() => addRole()}
-                className="rounded-full border border-dashed border-slate-300 px-3 py-1 text-xs text-slate-600 hover:border-indigo-400 hover:bg-indigo-50"
+                className="rounded-full border border-dashed border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-600 transition hover:border-indigo-400 hover:bg-indigo-50 hover:text-indigo-700"
               >
                 + other role
               </button>
@@ -288,14 +288,14 @@ export default function QuestionsPage() {
 
           <fieldset>
             <div className="flex items-center justify-between gap-2">
-              <legend className="text-sm font-medium">What should be on each card?</legend>
-              <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${TONES.gray}`}>Your choice</span>
+              <legend className="section-title !text-sm">What should be on each card?</legend>
+              <span className={TONES.gray}>Your choice</span>
             </div>
             <div className="mt-2 grid gap-2 sm:grid-cols-2">
               {FIELD_OPTIONS.map((f) => (
                 <label
                   key={f.key}
-                  className="flex items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-sm has-[:checked]:border-indigo-300 has-[:checked]:bg-indigo-50"
+                  className="flex cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm transition hover:border-slate-300 has-[:checked]:border-indigo-300 has-[:checked]:bg-indigo-50"
                 >
                   <input
                     type="checkbox"
@@ -305,7 +305,7 @@ export default function QuestionsPage() {
                     className="h-4 w-4 accent-indigo-600"
                   />
                   {f.label}
-                  {f.locked && <span className="ml-auto text-xs text-slate-400">always</span>}
+                  {f.locked && <span className="mono ml-auto text-slate-400">always</span>}
                 </label>
               ))}
             </div>
@@ -339,13 +339,16 @@ export default function QuestionsPage() {
             </p>
           )}
 
-          <button
-            type="submit"
-            disabled={saving}
-            className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-wait disabled:bg-indigo-400"
-          >
-            {saving ? "Saving..." : "Save and see designs"}
-          </button>
+          <div className="flex flex-col-reverse gap-3 border-t border-slate-100 pt-5 sm:flex-row sm:items-center sm:justify-between">
+            <Link href="/projects/new" className="btn-secondary">
+              <ArrowLeft size={16} aria-hidden="true" />
+              Back
+            </Link>
+            <button type="submit" disabled={saving} className="btn-primary !px-5 !py-2.5 disabled:cursor-wait">
+              {saving ? "Saving..." : "Save and see designs"}
+              {!saving && <ArrowRight size={16} aria-hidden="true" />}
+            </button>
+          </div>
         </form>
       </div>
     </main>

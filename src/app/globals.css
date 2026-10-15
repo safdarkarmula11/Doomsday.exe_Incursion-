@@ -1,26 +1,153 @@
 @import "tailwindcss";
 
+/* Fonts are self-hosted from npm (no Google Fonts request). */
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/plus-jakarta-sans";
+@import "@fontsource-variable/jetbrains-mono";
+
+/* "Technical Print Studio" design tokens (from the Stitch design system). */
+@theme {
+  --font-sans: "Inter Variable", Inter, ui-sans-serif, system-ui, Arial, sans-serif;
+  --font-display: "Plus Jakarta Sans Variable", "Plus Jakarta Sans", "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
+
+  --color-surface: #faf8ff;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f2f3ff;
+  --color-surface-container: #eaedff;
+  --color-surface-container-high: #e2e7ff;
+  --color-on-surface: #131b2e;
+  --color-on-surface-variant: #464555;
+  --color-outline: #777587;
+  --color-outline-variant: #c7c4d8;
+  --color-primary: #3525cd;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #4f46e5;
+  --color-on-primary-container: #dad7ff;
+  --color-primary-fixed: #e2dfff;
+  --color-secondary: #515f74;
+  --color-secondary-container: #d5e3fd;
+  --color-on-secondary-container: #57657b;
+  --color-tertiary: #005338;
+  --color-tertiary-container: #006e4b;
+  --color-tertiary-fixed-dim: #4edea3;
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: Inter, Arial, Helvetica, sans-serif;
-  --font-mono: ui-monospace, Menlo, Consolas, monospace;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #f8fafc;
+  --foreground: #0f172a;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
+}
+
+/* Crisp indigo focus ring (2px offset) on every interactive element. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible,
+[tabindex]:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #ffffff, 0 0 0 4px #4f46e5;
+}
+
+/* The page wrapper fills the space between the top bar and the footer. */
+main.min-h-screen {
+  min-height: 0;
+  flex: 1 0 auto;
+}
+
+/* ---- Shared building blocks (use these on every page) ---- */
+@utility btn {
+  @apply inline-flex items-center justify-center gap-1.5 rounded-lg px-3.5 py-2 text-sm font-semibold transition
+    active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100;
+}
+@utility btn-primary {
+  @apply btn bg-indigo-600 text-white shadow-sm hover:bg-indigo-700;
+}
+@utility btn-secondary {
+  @apply btn border border-slate-300 bg-white text-slate-700 hover:bg-slate-50;
+}
+@utility btn-ghost {
+  @apply btn text-slate-600 hover:bg-slate-100;
+}
+@utility btn-danger {
+  @apply btn border border-red-300 bg-red-50 text-red-600 hover:bg-red-500 hover:text-white;
+}
+@utility btn-sm {
+  @apply px-2.5 py-1.5 text-xs;
+}
+
+@utility card {
+  @apply rounded-xl border border-slate-200 bg-white shadow-[0_1px_3px_0_rgba(15,23,42,0.04)];
+}
+@utility card-pad {
+  @apply card p-5;
+}
+
+@utility field {
+  @apply h-9 w-full rounded-lg border border-slate-300 bg-white px-3 text-sm text-slate-900 placeholder:text-slate-400
+    focus:border-indigo-600 focus:outline-none disabled:bg-slate-50 disabled:text-slate-500;
+}
+@utility field-label {
+  @apply mb-1 block text-xs font-medium text-slate-700;
+}
+@utility eyebrow {
+  @apply font-mono text-[11px] font-medium uppercase tracking-wider text-indigo-700;
+}
+@utility mono {
+  @apply font-mono text-xs tracking-wide;
+}
+@utility page-title {
+  @apply font-display text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl;
+}
+@utility page-sub {
+  @apply mt-1 text-sm text-slate-600;
+}
+@utility section-title {
+  @apply font-display text-base font-semibold text-slate-900;
+}
+
+/* Status chips */
+@utility chip {
+  @apply inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium;
+}
+@utility chip-ok {
+  @apply chip border-emerald-200 bg-emerald-50 text-emerald-700;
+}
+@utility chip-warn {
+  @apply chip border-amber-200 bg-amber-50 text-amber-700;
+}
+@utility chip-error {
+  @apply chip border-red-200 bg-red-50 text-red-700;
+}
+@utility chip-info {
+  @apply chip border-indigo-100 bg-indigo-50 text-indigo-700;
+}
+@utility chip-neutral {
+  @apply chip border-slate-200 bg-slate-100 text-slate-600;
+}
+
+/* Elevated card preview stage (the printed card floats above the workplane). */
+@utility card-stage {
+  @apply overflow-hidden rounded-lg bg-white ring-1 ring-slate-200;
+  box-shadow: 0 12px 24px -4px rgba(15, 23, 42, 0.08), 0 4px 8px -2px rgba(15, 23, 42, 0.04);
+}
+
+textarea.field {
+  height: auto;
+  padding-block: 0.5rem;
 }

@@ -2,13 +2,14 @@
 
 import { useMemo, useRef, useState } from "react";
 import Papa from "papaparse";
+import { UploadCloud } from "lucide-react";
 import { FIELD_DEFS, MAX_FILE_BYTES, MAX_ROWS, SKIP, autoMap, buildRows } from "@/lib/people";
 
 const BADGE = {
-  ok: "bg-green-100 text-green-800",
-  warning: "bg-amber-100 text-amber-800",
-  error: "bg-red-100 text-red-800",
-  skipped: "bg-slate-100 text-slate-600",
+  ok: "chip-ok",
+  warning: "chip-warn",
+  error: "chip-error",
+  skipped: "chip-neutral",
 };
 const BADGE_TEXT = { ok: "OK", warning: "Check", error: "Problem", skipped: "Skipped" };
 
@@ -89,20 +90,21 @@ export default function CsvImporter({ projectId, roles, existingCount, onDone })
     }
   }
 
-  const select = "w-full rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm";
+  const select = "field";
 
   return (
     <div>
       {!records.length && (
-        <div className="rounded-xl border-2 border-dashed border-slate-300 bg-white p-6 text-center">
+        <div className="card rounded-xl border-2 border-dashed border-slate-300 bg-white p-8 text-center">
+          <UploadCloud className="mx-auto mb-2 h-8 w-8 text-indigo-600" aria-hidden="true" />
           <p className="text-sm text-slate-700">Choose a CSV file with one person per row.</p>
           <p className="mt-1 text-xs text-slate-500">
             Needs a name and a role column. ID number and photo link are optional.{" "}
-            <a href="/sample-people.csv" download className="font-medium text-indigo-600 underline">
+            <a href="/sample-people.csv" download className="font-medium text-indigo-700 underline">
               Download an example file
             </a>
           </p>
-          <label className="mt-4 inline-block cursor-pointer rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
+          <label className="btn-primary mt-4 cursor-pointer px-4 py-2 focus-within:ring-2 focus-within:ring-indigo-600 focus-within:ring-offset-2">
             Choose a CSV file
             <input ref={input} type="file" accept=".csv,.txt,text/csv" onChange={onFile} className="sr-only" />
           </label>
@@ -110,35 +112,35 @@ export default function CsvImporter({ projectId, roles, existingCount, onDone })
       )}
 
       {error && (
-        <p role="alert" className="mt-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p role="alert" className="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
           {error}
         </p>
       )}
 
       {records.length > 0 && (
         <div className="space-y-5">
-          <div className="flex flex-wrap items-center justify-between gap-2 rounded-lg bg-white px-4 py-3 text-sm ring-1 ring-slate-200">
+          <div className="card flex flex-wrap items-center justify-between gap-2 bg-indigo-50/50 px-4 py-3 text-sm">
             <span>
               <strong>{fileName}</strong>: {records.length} rows
             </span>
-            <button type="button" onClick={reset} className="text-xs font-medium text-indigo-600 underline">
+            <button type="button" onClick={reset} className="btn-secondary btn-sm">
               Choose a different file
             </button>
           </div>
 
-          <section aria-label="Match the columns" className="rounded-xl border border-slate-200 bg-white p-4">
-            <h3 className="font-semibold">1. Match the columns</h3>
+          <section aria-label="Match the columns" className="card-pad">
+            <h3 className="section-title">1. Match the columns</h3>
             <p className="mt-1 text-xs text-slate-500">We guessed. Change any that are wrong.</p>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
+            <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
               {FIELD_DEFS.map((f) => (
-                <label key={f.key} className="block text-sm">
-                  <span className="block text-xs font-medium text-slate-600">
+                <label key={f.key} className="block rounded-lg bg-slate-50 p-3 text-sm ring-1 ring-slate-200">
+                  <span className="field-label">
                     {f.label} {f.required ? <span className="text-red-600">(required)</span> : <span className="text-slate-400">(optional)</span>}
                   </span>
                   <select
                     value={mapping[f.key]}
                     onChange={(e) => setMapping((m) => ({ ...m, [f.key]: e.target.value }))}
-                    className={`mt-1 ${select}`}
+                    className={select}
                   >
                     <option value="">{f.required ? "Choose a column..." : "(none)"}</option>
                     {headers.map((h) => (
@@ -150,31 +152,31 @@ export default function CsvImporter({ projectId, roles, existingCount, onDone })
                 </label>
               ))}
             </div>
-            {!ready && <p className="mt-3 text-sm text-amber-700">Choose which column holds the name and which holds the role.</p>}
+            {!ready && <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-700">Choose which column holds the name and which holds the role.</p>}
           </section>
 
           {built && built.unknownRoles.length > 0 && (
-            <section aria-label="Unknown roles" className="rounded-xl border border-amber-300 bg-amber-50 p-4">
-              <h3 className="font-semibold text-amber-900">2. Some roles are not in this event</h3>
+            <section aria-label="Unknown roles" className="card-pad border-amber-300 bg-amber-50">
+              <h3 className="section-title text-amber-900">2. Some roles are not in this event</h3>
               <p className="mt-1 text-xs text-amber-800">
                 This event has: {roles.join(", ")}. Say what to do with the others.
               </p>
               <div className="mt-3 space-y-2">
                 {built.unknownRoles.map((u) => (
-                  <label key={u.role} className="flex flex-wrap items-center gap-2 text-sm">
-                    <span className="min-w-40">
-                      "{u.role}" <span className="text-xs text-slate-500">({u.count} {u.count === 1 ? "row" : "rows"})</span>
+                  <label key={u.role} className="flex flex-wrap items-center gap-2 rounded-lg bg-white p-2 text-sm ring-1 ring-amber-200">
+                    <span className="min-w-40 font-mono text-xs">
+                      &quot;{u.role}&quot; <span className="text-xs text-slate-500">({u.count} {u.count === 1 ? "row" : "rows"})</span>
                     </span>
                     <select
                       value={roleMap[u.role] ?? ""}
                       onChange={(e) => setRoleMap((m) => ({ ...m, [u.role]: e.target.value }))}
-                      className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-sm"
+                      className="field w-auto min-w-48"
                       aria-label={`What to do with role ${u.role}`}
                     >
                       <option value="">Choose...</option>
                       {roles.map((r) => (
                         <option key={r} value={r}>
-                          Use "{r}"
+                          Use &quot;{r}&quot;
                         </option>
                       ))}
                       <option value={SKIP}>Skip these people</option>
@@ -186,39 +188,39 @@ export default function CsvImporter({ projectId, roles, existingCount, onDone })
           )}
 
           {built && (
-            <section aria-label="Check the rows" className="rounded-xl border border-slate-200 bg-white p-4">
-              <h3 className="font-semibold">{built.unknownRoles.length > 0 ? "3." : "2."} Check the rows</h3>
+            <section aria-label="Check the rows" className="card-pad">
+              <h3 className="section-title">{built.unknownRoles.length > 0 ? "3." : "2."} Check the rows</h3>
               <div role="status" className="mt-2 flex flex-wrap gap-2 text-xs">
-                <span className={`rounded-full px-2.5 py-0.5 font-medium ${BADGE.ok}`}>{built.summary.ok} fine</span>
-                <span className={`rounded-full px-2.5 py-0.5 font-medium ${BADGE.warning}`}>{built.summary.warning} to check</span>
-                <span className={`rounded-full px-2.5 py-0.5 font-medium ${BADGE.error}`}>{built.summary.error} with problems</span>
+                <span className={BADGE.ok}>{built.summary.ok} fine</span>
+                <span className={BADGE.warning}>{built.summary.warning} to check</span>
+                <span className={BADGE.error}>{built.summary.error} with problems</span>
                 {built.summary.skipped > 0 && (
-                  <span className={`rounded-full px-2.5 py-0.5 font-medium ${BADGE.skipped}`}>{built.summary.skipped} skipped</span>
+                  <span className={BADGE.skipped}>{built.summary.skipped} skipped</span>
                 )}
               </div>
               {built.summary.error > 0 && <p className="mt-2 text-xs text-slate-500">Rows with problems are left out. Fix them in your file and upload it again, or import without them.</p>}
               {!mapping.id && <p className="mt-2 text-xs text-slate-500">No ID column chosen, so cards will have no ID number and no QR code.</p>}
 
-              <div className="mt-3 overflow-x-auto">
+              <div className="mt-3 overflow-x-auto rounded-lg ring-1 ring-slate-200">
                 <table className="w-full min-w-[560px] text-left text-sm">
-                  <thead className="text-xs uppercase text-slate-500">
+                  <thead className="bg-slate-50 font-mono text-[11px] uppercase tracking-wider text-slate-500">
                     <tr>
-                      <th className="py-1 pr-3">Line</th>
-                      <th className="py-1 pr-3">Name</th>
-                      <th className="py-1 pr-3">Role</th>
-                      <th className="py-1 pr-3">ID</th>
-                      <th className="py-1">Status</th>
+                      <th className="px-3 py-2 font-medium">Line</th>
+                      <th className="px-3 py-2 font-medium">Name</th>
+                      <th className="px-3 py-2 font-medium">Role</th>
+                      <th className="px-3 py-2 font-medium">ID</th>
+                      <th className="px-3 py-2 font-medium">Status</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {(showAll ? built.rows : built.rows.slice(0, 25)).map((r) => (
-                      <tr key={r.line} className="align-top">
-                        <td className="py-1.5 pr-3 text-slate-400">{r.line}</td>
-                        <td className="py-1.5 pr-3">{r.name || <em className="text-slate-400">empty</em>}</td>
-                        <td className="py-1.5 pr-3 capitalize">{r.role || <em className="text-slate-400">?</em>}</td>
-                        <td className="py-1.5 pr-3 font-mono text-xs">{r.externalId}</td>
-                        <td className="py-1.5">
-                          <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${BADGE[r.status]}`}>{BADGE_TEXT[r.status]}</span>
+                      <tr key={r.line} className={`align-top ${r.status === "error" ? "bg-red-50/60" : ""}`}>
+                        <td className="px-3 py-2 font-mono text-xs text-slate-400">{r.line}</td>
+                        <td className={`px-3 py-2 ${!r.name ? "bg-red-100/70" : ""}`}>{r.name || <em className="text-slate-400">empty</em>}</td>
+                        <td className={`px-3 py-2 capitalize ${!r.role ? "bg-red-100/70" : ""}`}>{r.role || <em className="text-slate-400">?</em>}</td>
+                        <td className="px-3 py-2 font-mono text-xs">{r.externalId}</td>
+                        <td className="px-3 py-2">
+                          <span className={BADGE[r.status]}>{BADGE_TEXT[r.status]}</span>
                           {r.issues.map((x) => (
                             <span key={x.message} className={`mt-0.5 block text-xs ${x.level === "error" ? "text-red-600" : "text-amber-700"}`}>
                               {x.message}
@@ -231,7 +233,7 @@ export default function CsvImporter({ projectId, roles, existingCount, onDone })
                 </table>
               </div>
               {built.rows.length > 25 && (
-                <button type="button" onClick={() => setShowAll((s) => !s)} className="mt-2 text-xs font-medium text-indigo-600 underline">
+                <button type="button" onClick={() => setShowAll((s) => !s)} className="btn-secondary btn-sm mt-3">
                   {showAll ? "Show fewer rows" : `Show all ${built.rows.length} rows`}
                 </button>
               )}
@@ -239,7 +241,7 @@ export default function CsvImporter({ projectId, roles, existingCount, onDone })
           )}
 
           {built && (
-            <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="card flex flex-wrap items-center justify-between gap-3 px-5 py-4">
               <p className="text-sm text-slate-600">
                 {importable.length} {importable.length === 1 ? "person" : "people"} will be added
                 {existingCount > 0 ? `, replacing the ${existingCount} you have now` : ""}.
@@ -248,7 +250,7 @@ export default function CsvImporter({ projectId, roles, existingCount, onDone })
                 type="button"
                 onClick={doImport}
                 disabled={busy || importable.length === 0}
-                className="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-300"
+                className="btn-primary px-5 py-2.5"
               >
                 {busy ? "Saving..." : `Import ${importable.length} ${importable.length === 1 ? "person" : "people"}`}
               </button>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Sparkles } from "lucide-react";
 
 const EXAMPLES = ["Make the name bigger", "Make organizers red", "Hide the ID number", "Center the event name"];
 
@@ -35,8 +36,11 @@ export default function RefineBox({ projectId, draftId, config, selectedId, onAp
   }
 
   return (
-    <section aria-label="Describe a change" className="rounded-xl border border-slate-200 bg-white p-4">
-      <h3 className="font-semibold">Describe a change</h3>
+    <section aria-label="Describe a change" className="rounded-xl border border-indigo-100 bg-indigo-50/60 p-4">
+      <h3 className="section-title flex items-center gap-2">
+        <Sparkles size={16} className="text-indigo-600" aria-hidden="true" />
+        Describe a change
+      </h3>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -51,12 +55,12 @@ export default function RefineBox({ projectId, draftId, config, selectedId, onAp
           disabled={busy}
           placeholder="e.g. make the name bigger and the badge green"
           aria-label="Describe a change"
-          className="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 disabled:bg-slate-100"
+          className="field min-w-0 flex-1"
         />
         <button
           type="submit"
           disabled={busy || text.trim().length < 3}
-          className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-300"
+          className="btn-primary h-9 !py-0"
         >
           {busy ? "Working..." : "Apply"}
         </button>
@@ -69,13 +73,13 @@ export default function RefineBox({ projectId, draftId, config, selectedId, onAp
             type="button"
             disabled={busy}
             onClick={() => run(ex)}
-            className="rounded-full border border-slate-300 px-2.5 py-0.5 text-xs text-slate-600 hover:border-indigo-400 hover:bg-indigo-50 disabled:opacity-50"
+            className="rounded-full border border-slate-300 bg-white px-2.5 py-0.5 text-xs text-slate-600 hover:border-indigo-400 hover:bg-indigo-50 disabled:opacity-50"
           >
             {ex}
           </button>
         ))}
       </div>
-      {selectedId && <p className="mt-2 text-xs text-slate-500">Say "it" or "this" to mean the selected element.</p>}
+      {selectedId && <p className="mt-2 text-xs text-slate-500">Say &quot;it&quot; or &quot;this&quot; to mean the selected element.</p>}
 
       <div role="status" aria-live="polite" className="mt-3 text-sm">
         {result?.error && <p className="rounded-lg bg-red-50 px-3 py-2 text-red-700">{result.error}</p>}
@@ -96,7 +100,7 @@ export default function RefineBox({ projectId, draftId, config, selectedId, onAp
         )}
         {result && !result.error && result.applied.length === 0 && result.unchanged.length === 0 && (
           <p className="rounded-lg bg-amber-50 px-3 py-2 text-amber-800">
-            I could not turn that into a change. Try naming the element and what to do, like "make the event name bold".
+            I could not turn that into a change. Try naming the element and what to do, like &quot;make the event name bold&quot;.
           </p>
         )}
         {result && !result.error && result.ignored.length > 0 && (

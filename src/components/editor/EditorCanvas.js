@@ -12,6 +12,7 @@ export default function EditorCanvas({ template, data, selectedId, onSelect, onM
   const { width, height } = template.canvas;
   const overlay = useRef(null);
   const drag = useRef(null);
+  const seq = useRef(0);
 
   const toUnits = (e) => {
     const el = overlay.current;
@@ -25,7 +26,7 @@ export default function EditorCanvas({ template, data, selectedId, onSelect, onM
     e.stopPropagation();
     onSelect(layer.id);
     const p = toUnits(e);
-    drag.current = { id: layer.id, sx: p.x, sy: p.y, ox: layer.x, oy: layer.y, key: `drag-${Date.now()}` };
+    drag.current = { id: layer.id, sx: p.x, sy: p.y, ox: layer.x, oy: layer.y, key: `drag-${(seq.current += 1)}` };
     try {
       e.currentTarget.setPointerCapture(e.pointerId); // keeps the drag going when the pointer leaves the box
     } catch {}
@@ -41,7 +42,7 @@ export default function EditorCanvas({ template, data, selectedId, onSelect, onM
   return (
     <div>
       <div
-        className="relative mx-auto w-full max-w-[360px] overflow-hidden rounded-md bg-white shadow-md ring-1 ring-slate-200"
+        className="card-stage relative mx-auto w-full max-w-[360px]"
         style={{ aspectRatio: `${width} / ${height}` }}
       >
         <div className="absolute inset-0 [&>svg]:block [&>svg]:h-full [&>svg]:w-full" dangerouslySetInnerHTML={{ __html: svg }} />

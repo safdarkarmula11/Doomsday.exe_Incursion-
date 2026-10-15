@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { ArrowRight, BookmarkPlus, Eye, EyeOff, Layers, Redo2, RotateCcw, Undo2 } from "lucide-react";
 import Stepper from "@/components/wizard/Stepper";
 import EditorCanvas from "@/components/editor/EditorCanvas";
 import PropertiesPanel from "@/components/editor/PropertiesPanel";
@@ -232,75 +233,144 @@ export default function EditorPage() {
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
-      <div className="mx-auto max-w-6xl px-4 py-10">
+      <div className="mx-auto max-w-[1440px] px-4 py-6">
         <Stepper current={3} />
 
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h1 className="text-2xl font-bold">Edit your design</h1>
-            <p className="mt-1 text-slate-600">Click anything on the card to change it. Drag it to move it.</p>
+        {/* toolbar */}
+        <div className="card flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+          <div className="min-w-0">
+            <h1 className="page-title !text-xl sm:!text-2xl">Edit your design</h1>
+            <p className="page-sub !mt-0.5">Click anything on the card to change it. Drag it to move it.</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <span
               role="status"
-              className={`text-xs ${saveState === "error" ? "font-medium text-red-600" : "text-slate-500"}`}
+              className={`font-mono text-xs ${saveState === "error" ? "font-medium text-red-600" : "text-slate-500"}`}
             >
               {statusText}
             </span>
             {saveState === "error" && (
-              <button type="button" onClick={save} className="text-xs font-medium text-indigo-600 underline">
+              <button type="button" onClick={save} className="btn-ghost btn-sm text-indigo-600">
                 Try again
               </button>
             )}
-            <button type="button" onClick={undo} disabled={!hist.past.length} className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm hover:bg-slate-50 disabled:opacity-40">
-              Undo
+            <div className="flex items-center gap-1 rounded-lg border border-slate-200 bg-white p-0.5">
+              <button type="button" onClick={undo} disabled={!hist.past.length} className="btn-ghost btn-sm">
+                <Undo2 size={14} aria-hidden="true" />
+                Undo
+              </button>
+              <button type="button" onClick={redo} disabled={!hist.future.length} className="btn-ghost btn-sm">
+                <Redo2 size={14} aria-hidden="true" />
+                Redo
+              </button>
+            </div>
+            <button type="button" onClick={resetAll} className="btn-ghost btn-sm text-red-600 hover:bg-red-50">
+              <RotateCcw size={14} aria-hidden="true" />
+              Remove all my changes
             </button>
-            <button type="button" onClick={redo} disabled={!hist.future.length} className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm hover:bg-slate-50 disabled:opacity-40">
-              Redo
+            <button type="button" onClick={saveAsTemplate} className="btn-ghost btn-sm text-slate-700">
+              <BookmarkPlus size={14} aria-hidden="true" />
+              Save as template
+            </button>
+            <Link href={`/projects/${id}/drafts`} className="btn-ghost btn-sm text-slate-700">
+              Back to the designs
+            </Link>
+            <button type="button" onClick={next} disabled={saveState === "saving"} className="btn-primary">
+              Continue to people
+              <ArrowRight size={16} aria-hidden="true" />
             </button>
           </div>
+          {tplNote && (
+            <p role="status" className="w-full text-xs text-slate-600">
+              {tplNote}
+            </p>
+          )}
         </div>
 
-        <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-          {/* left: the card */}
-          <div>
-            <div className="mb-3 flex flex-wrap items-center gap-2" role="group" aria-label="Preview role">
-              <span className="text-sm text-slate-600">Preview as:</span>
+        <div className="mt-4 grid gap-4 lg:grid-cols-[288px_minmax(0,1fr)_320px] lg:items-start">
+          {/* left: elements */}
+          <section aria-label="Elements" className="card order-2 overflow-hidden lg:order-1">
+            <div className="flex items-center justify-between gap-2 border-b border-slate-100 px-4 py-3">
+              <h3 className="section-title flex items-center gap-2">
+                <Layers size={16} className="text-indigo-600" aria-hidden="true" />
+                Elements
+              </h3>
+              <span className="chip-info font-mono">{fieldFiltered.layers.length}</span>
+            </div>
+            <ul className="space-y-1 p-2">
+              {fieldFiltered.layers.map((l) => {
+                const hidden = Boolean(config.layers[l.id]?.hidden);
+                const isSel = l.id === selectedId;
+                return (
+                  <li
+                    key={l.id}
+                    className={`flex items-center justify-between gap-2 rounded-lg border px-2 py-1 ${
+                      isSel ? "border-indigo-200 bg-indigo-50" : "border-transparent hover:bg-slate-50"
+                    }`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => !hidden && setSelectedId(l.id)}
+                      disabled={hidden}
+                      aria-current={l.id === selectedId}
+                      className={`min-w-0 flex-1 truncate rounded py-1.5 text-left text-sm ${
+                        hidden ? "text-slate-400 line-through" : isSel ? "font-semibold text-indigo-700" : "text-slate-700 hover:text-indigo-600"
+                      }`}
+                    >
+                      {layerLabel(l.id)}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        toggleHidden(l.id, !hidden);
+                        if (!hidden && selectedId === l.id) setSelectedId(null);
+                      }}
+                      aria-label={`${hidden ? "Show" : "Hide"} ${layerLabel(l.id)}`}
+                      className="btn-secondary btn-sm shrink-0 !px-2 font-mono"
+                    >
+                      {hidden ? <EyeOff size={13} aria-hidden="true" /> : <Eye size={13} aria-hidden="true" />}
+                      {hidden ? "Show" : "Hide"}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+
+          {/* centre: the card stage */}
+          <div className="order-1 min-w-0 rounded-xl border border-slate-200 bg-slate-100 p-4 sm:p-6 lg:order-2">
+            <div className="mb-4 flex flex-wrap items-center gap-2" role="group" aria-label="Preview role">
+              <span className="eyebrow !text-slate-600">Preview as:</span>
               {loaded.roles.map((r) => (
                 <button
                   key={r}
                   type="button"
                   onClick={() => setRole(r)}
                   aria-pressed={r === role}
-                  className={`rounded-full border px-3 py-1 text-sm capitalize ${
-                    r === role ? "border-indigo-600 bg-indigo-600 text-white" : "border-slate-300 bg-white text-slate-700 hover:border-indigo-400"
+                  className={`rounded-full border px-3 py-1 text-sm font-medium capitalize transition ${
+                    r === role ? "border-indigo-600 bg-indigo-600 text-white shadow-sm" : "border-slate-300 bg-white text-slate-700 hover:border-indigo-400"
                   }`}
                 >
                   {r}
                 </button>
               ))}
             </div>
-            <EditorCanvas
-              template={effective}
-              data={data}
-              selectedId={selectedId}
-              onSelect={setSelectedId}
-              onMove={(layerId, x, y, key) => changeLayer(layerId, { x, y }, key)}
-            />
+            <div className="rounded-lg bg-slate-200/60 px-2 py-6 sm:py-8">
+              <EditorCanvas
+                template={effective}
+                data={data}
+                selectedId={selectedId}
+                onSelect={setSelectedId}
+                onMove={(layerId, x, y, key) => changeLayer(layerId, { x, y }, key)}
+              />
+            </div>
             <p className="mt-3 text-center text-xs text-slate-500">
               The preview uses a sample person. Arrow keys move the selected element (Shift = bigger steps). Ctrl+Z undoes.
             </p>
           </div>
 
-          {/* right: tools */}
-          <div className="space-y-4">
-            <RefineBox
-              projectId={id}
-              draftId={loaded.draftId}
-              config={config}
-              selectedId={selectedId}
-              onApply={(next) => commit(() => next)}
-            />
+          {/* right: properties, role colours, refine */}
+          <div className="order-3 space-y-4">
             {selected ? (
               <PropertiesPanel
                 layer={selected}
@@ -315,43 +385,8 @@ export default function EditorPage() {
               </p>
             )}
 
-            <section aria-label="Elements" className="rounded-xl border border-slate-200 bg-white p-4">
-              <h3 className="font-semibold">Elements</h3>
-              <ul className="mt-2 divide-y divide-slate-100">
-                {fieldFiltered.layers.map((l) => {
-                  const hidden = Boolean(config.layers[l.id]?.hidden);
-                  return (
-                    <li key={l.id} className="flex items-center justify-between gap-2 py-1.5">
-                      <button
-                        type="button"
-                        onClick={() => !hidden && setSelectedId(l.id)}
-                        disabled={hidden}
-                        aria-current={l.id === selectedId}
-                        className={`truncate text-left text-sm ${
-                          hidden ? "text-slate-400 line-through" : l.id === selectedId ? "font-semibold text-indigo-700" : "text-slate-700 hover:text-indigo-600"
-                        }`}
-                      >
-                        {layerLabel(l.id)}
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          toggleHidden(l.id, !hidden);
-                          if (!hidden && selectedId === l.id) setSelectedId(null);
-                        }}
-                        aria-label={`${hidden ? "Show" : "Hide"} ${layerLabel(l.id)}`}
-                        className="shrink-0 rounded border border-slate-300 px-2 py-0.5 text-xs text-slate-600 hover:bg-slate-50"
-                      >
-                        {hidden ? "Show" : "Hide"}
-                      </button>
-                    </li>
-                  );
-                })}
-              </ul>
-            </section>
-
-            <section aria-label="Role colours" className="rounded-xl border border-slate-200 bg-white p-4">
-              <h3 className="font-semibold">Role colours</h3>
+            <section aria-label="Role colours" className="card-pad !p-4">
+              <h3 className="section-title">Role colours</h3>
               <p className="mt-1 text-xs text-slate-500">Each role gets its own colour on every card.</p>
               <div className="mt-3 grid grid-cols-2 gap-3">
                 {loaded.roles.map((r) => (
@@ -360,34 +395,14 @@ export default function EditorPage() {
               </div>
             </section>
 
-            <button type="button" onClick={resetAll} className="text-xs font-medium text-slate-500 underline hover:text-red-600">
-              Remove all my changes
-            </button>
+            <RefineBox
+              projectId={id}
+              draftId={loaded.draftId}
+              config={config}
+              selectedId={selectedId}
+              onApply={(next) => commit(() => next)}
+            />
           </div>
-        </div>
-
-        <div className="mt-8 flex flex-wrap items-center justify-between gap-3 border-t border-slate-200 pt-6">
-          <div className="flex flex-wrap items-center gap-4">
-            <Link href={`/projects/${id}/drafts`} className="text-sm font-medium text-indigo-600 hover:underline">
-              Back to the designs
-            </Link>
-            <button type="button" onClick={saveAsTemplate} className="text-sm font-medium text-indigo-600 hover:underline">
-              Save as template
-            </button>
-            {tplNote && (
-              <span role="status" className="text-xs text-slate-600">
-                {tplNote}
-              </span>
-            )}
-          </div>
-          <button
-            type="button"
-            onClick={next}
-            disabled={saveState === "saving"}
-            className="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-wait disabled:bg-indigo-400"
-          >
-            Continue to people
-          </button>
         </div>
       </div>
     </main>

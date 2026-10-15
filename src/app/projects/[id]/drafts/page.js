@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
+import { AlertTriangle, ArrowLeft, Check } from "lucide-react";
 import Stepper from "@/components/wizard/Stepper";
 
 export default function DraftsPage() {
@@ -146,16 +147,24 @@ export default function DraftsPage() {
 
   return (
     <main className="min-h-screen bg-slate-50 text-slate-900">
-      <div className="mx-auto max-w-5xl px-4 py-10">
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:py-10">
         <Stepper current={2} />
 
-        <h1 className="text-2xl font-bold">Choose a design</h1>
-        <p className="mt-1 text-slate-600">
-          Pick the look you like best. You can change colours, text and layout in the next step.
-        </p>
+        <header className="card p-5 sm:p-6">
+          <p className="eyebrow">Step 3 of 6</p>
+          <div className="mt-1 flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h1 className="page-title">Choose a design</h1>
+              <p className="page-sub">
+                Pick the look you like best. You can change colours, text and layout in the next step.
+              </p>
+            </div>
+            <span className="chip-info font-mono">CR80 · 54 x 85.6 mm</span>
+          </div>
+        </header>
 
         {error && (
-          <div role="alert" className="mt-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
+          <div role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
             {error}{" "}
             {needsDetails && (
               <Link href={`/projects/${id}/questions`} className="font-medium underline">
@@ -169,18 +178,18 @@ export default function DraftsPage() {
 
         {drafts && (
           <>
-            <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+            <div className="card mt-5 flex flex-wrap items-end justify-between gap-x-6 gap-y-3 p-4">
               <div className="flex flex-wrap items-center gap-2" role="group" aria-label="Preview role">
-                <span className="text-sm text-slate-600">Preview as:</span>
+                <span className="eyebrow !text-slate-500">Preview as:</span>
                 {roles.map((r) => (
                   <button
                     key={r}
                     type="button"
                     onClick={() => changeRole(r)}
                     aria-pressed={r === role}
-                    className={`rounded-full border px-3 py-1 text-sm capitalize ${
+                    className={`rounded-full border px-3 py-1 text-sm font-medium capitalize transition ${
                       r === role
-                        ? "border-indigo-600 bg-indigo-600 text-white"
+                        ? "border-indigo-600 bg-indigo-600 text-white shadow-sm"
                         : "border-slate-300 bg-white text-slate-700 hover:border-indigo-400"
                     }`}
                   >
@@ -188,12 +197,7 @@ export default function DraftsPage() {
                   </button>
                 ))}
               </div>
-              <button
-                type="button"
-                onClick={regenerate}
-                disabled={busy !== ""}
-                className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm hover:bg-slate-50 disabled:opacity-50"
-              >
+              <button type="button" onClick={regenerate} disabled={busy !== ""} className="btn-secondary">
                 {busy === "regenerate" ? "Working..." : "Start over with new designs"}
               </button>
             </div>
@@ -202,14 +206,14 @@ export default function DraftsPage() {
             </p>
 
             {brand && (
-              <div className="mt-4 flex flex-wrap items-end gap-x-6 gap-y-3 rounded-xl border border-slate-200 bg-white p-3 text-sm">
+              <div className="card mt-4 flex flex-wrap items-end gap-x-6 gap-y-3 p-4 text-sm">
                 <label className="block">
-                  <span className="block text-xs font-medium text-slate-600">Brand kit (logos, role colours, fonts)</span>
+                  <span className="field-label">Brand kit (logos, role colours, fonts)</span>
                   <select
                     value={brand.kitId}
                     onChange={(e) => changeKit(e.target.value)}
                     disabled={busy !== ""}
-                    className="mt-1 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm"
+                    className="field"
                   >
                     {brand.kits.map((k) => (
                       <option key={k.id} value={k.id}>
@@ -219,13 +223,13 @@ export default function DraftsPage() {
                   </select>
                 </label>
                 <label className="block">
-                  <span className="block text-xs font-medium text-slate-600">Add a design from a template</span>
-                  <span className="mt-1 flex gap-2">
+                  <span className="field-label">Add a design from a template</span>
+                  <span className="flex gap-2">
                     <select
                       value={addId}
                       onChange={(e) => setAddId(e.target.value)}
                       disabled={busy !== ""}
-                      className="rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-sm"
+                      className="field"
                     >
                       <option value="">Choose a template...</option>
                       {allTemplates.map((t) => (
@@ -235,17 +239,12 @@ export default function DraftsPage() {
                         </option>
                       ))}
                     </select>
-                    <button
-                      type="button"
-                      onClick={addDesign}
-                      disabled={!addId || busy !== ""}
-                      className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm hover:bg-slate-50 disabled:opacity-50"
-                    >
+                    <button type="button" onClick={addDesign} disabled={!addId || busy !== ""} className="btn-secondary h-9">
                       {busy === "add" ? "Adding..." : "Add"}
                     </button>
                   </span>
                 </label>
-                <span className="flex gap-4 pb-1 text-xs">
+                <span className="flex gap-4 pb-2 text-xs">
                   <Link href="/brand-kits" className="font-medium text-indigo-600 hover:underline">
                     Manage brand kits
                   </Link>
@@ -256,38 +255,44 @@ export default function DraftsPage() {
               </div>
             )}
 
-            <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {drafts.map((d) => (
                 <section
                   key={d.id}
-                  className={`flex flex-col rounded-xl border bg-white p-4 shadow-sm ${
-                    d.selected ? "border-indigo-500 ring-2 ring-indigo-200" : "border-slate-200"
+                  className={`card flex flex-col p-4 transition hover:shadow-md ${
+                    d.selected ? "!border-indigo-500 ring-2 ring-indigo-200" : ""
                   }`}
                 >
-                  <div className="flex items-center justify-between">
-                    <h2 className="font-semibold">{d.name}</h2>
+                  <div className="flex items-center justify-between gap-2">
+                    <h2 className="section-title">{d.name}</h2>
                     {d.selected && (
-                      <span className="rounded-full bg-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700">
+                      <span className="chip-info">
+                        <Check className="h-3 w-3" aria-hidden="true" />
                         Chosen before
                       </span>
                     )}
                   </div>
-                  <div
-                    className="mx-auto mt-3 w-full max-w-[220px] overflow-hidden rounded-md shadow-md ring-1 ring-slate-200 [&>svg]:block [&>svg]:h-auto [&>svg]:w-full"
-                    role="img"
-                    aria-label={`${d.name} design preview`}
-                    dangerouslySetInnerHTML={{ __html: d.svg }}
-                  />
+                  <div className="mt-3 rounded-lg bg-indigo-50/60 p-4 ring-1 ring-indigo-100">
+                    <div
+                      className="card-stage mx-auto w-full max-w-[220px] [&>svg]:block [&>svg]:h-auto [&>svg]:w-full"
+                      role="img"
+                      aria-label={`${d.name} design preview`}
+                      dangerouslySetInnerHTML={{ __html: d.svg }}
+                    />
+                  </div>
                   {d.warnings.length > 0 && (
-                    <p className="mt-3 text-xs text-amber-700">
-                      {d.warnings.length} note{d.warnings.length > 1 ? "s" : ""}: {d.warnings[0].message}
+                    <p className="mt-3 flex items-start gap-1.5 text-xs text-amber-700">
+                      <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />
+                      <span>
+                        {d.warnings.length} note{d.warnings.length > 1 ? "s" : ""}: {d.warnings[0].message}
+                      </span>
                     </p>
                   )}
                   <button
                     type="button"
                     onClick={() => choose(d.id)}
                     disabled={busy !== ""}
-                    className="mt-4 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-wait disabled:bg-indigo-400"
+                    className="btn-primary mt-auto w-full !py-2.5 disabled:cursor-wait"
                   >
                     {busy === d.id ? "Saving..." : "Choose this design"}
                   </button>
@@ -295,7 +300,12 @@ export default function DraftsPage() {
               ))}
             </div>
 
-            <Link href={`/projects/${id}/questions`} className="mt-8 inline-block text-sm font-medium text-indigo-600 hover:underline">
+            <p className="mt-6 rounded-xl bg-indigo-50/60 px-4 py-3 text-xs text-slate-600 ring-1 ring-indigo-100">
+              <span className="font-mono font-medium text-indigo-700">Print-ready:</span> CR80 size (54 x 85.6 mm) with 3 mm bleed and crop marks on A4 or A3 sheets.
+            </p>
+
+            <Link href={`/projects/${id}/questions`} className="btn-ghost mt-6 inline-flex !px-2 text-indigo-600">
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
               Back to the details
             </Link>
           </>

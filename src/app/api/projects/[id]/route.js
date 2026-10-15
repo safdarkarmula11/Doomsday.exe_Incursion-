@@ -48,3 +48,17 @@ export async function PATCH(request, { params }) {
     return Response.json({ error: DB_ERROR }, { status: 500 });
   }
 }
+
+/** DELETE -> removes the project and everything under it (people, drafts, assets). */
+export async function DELETE(_request, { params }) {
+  const { id } = await params;
+  try {
+    const found = await db.project.findUnique({ where: { id } });
+    if (!found) return Response.json({ error: "Project not found." }, { status: 404 });
+    await db.project.delete({ where: { id } });
+    return Response.json({ ok: true });
+  } catch (e) {
+    console.error("DELETE /api/projects/[id] failed:", e);
+    return Response.json({ error: DB_ERROR }, { status: 500 });
+  }
+}

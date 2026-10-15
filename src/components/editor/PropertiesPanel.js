@@ -1,5 +1,6 @@
 "use client";
 
+import { SlidersHorizontal } from "lucide-react";
 import ColorField from "@/components/editor/ColorField";
 import { EDITABLE, FONT_OPTIONS, layerLabel } from "@/lib/editorConfig";
 
@@ -8,7 +9,7 @@ const PLACEHOLDERS = "{{name}} {{role}} {{idNumber}} {{eventName}} {{eventSubtit
 function NumberField({ label, value, onChange, min, max, step = 1 }) {
   return (
     <label className="block">
-      <span className="block text-xs font-medium text-slate-600">{label}</span>
+      <span className="field-label !mb-0">{label}</span>
       <input
         type="number"
         value={Number.isFinite(value) ? value : ""}
@@ -16,7 +17,7 @@ function NumberField({ label, value, onChange, min, max, step = 1 }) {
         max={max}
         step={step}
         onChange={(e) => e.target.value !== "" && onChange(Number(e.target.value))}
-        className="mt-1 w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
+        className="field mt-1 font-mono"
       />
     </label>
   );
@@ -29,14 +30,17 @@ export default function PropertiesPanel({ layer, hasChanges, roleColor, onChange
   const has = (k) => props.includes(k);
 
   return (
-    <section aria-label="Selected element" className="rounded-xl border border-slate-200 bg-white p-4">
+    <section aria-label="Selected element" className="card-pad !p-4">
       <div className="flex items-center justify-between gap-2">
-        <h3 className="font-semibold">{layerLabel(layer.id)}</h3>
+        <h3 className="section-title flex min-w-0 items-center gap-2 truncate">
+          <SlidersHorizontal size={16} className="shrink-0 text-indigo-600" aria-hidden="true" />
+          <span className="truncate">{layerLabel(layer.id)}</span>
+        </h3>
         <button
           type="button"
           onClick={() => onReset(layer.id)}
           disabled={!hasChanges}
-          className="text-xs font-medium text-indigo-600 hover:underline disabled:cursor-default disabled:text-slate-400 disabled:no-underline"
+          className="btn-ghost btn-sm shrink-0 text-indigo-600 disabled:text-slate-400"
         >
           Reset this element
         </button>
@@ -45,14 +49,14 @@ export default function PropertiesPanel({ layer, hasChanges, roleColor, onChange
       <div className="mt-3 space-y-3">
         {has("text") && (
           <label className="block">
-            <span className="block text-xs font-medium text-slate-600">Text</span>
+            <span className="field-label !mb-0">Text</span>
             <input
               value={layer.text ?? ""}
               onChange={(e) => set("text", e.target.value)}
               maxLength={200}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-2 py-1.5 font-mono text-xs"
+              className="field mt-1 font-mono !text-xs"
             />
-            <span className="mt-1 block text-xs text-slate-500">
+            <span className="mt-1 block font-mono text-[11px] text-slate-500">
               Words in double braces are filled in for each person: {PLACEHOLDERS}
             </span>
           </label>
@@ -60,11 +64,11 @@ export default function PropertiesPanel({ layer, hasChanges, roleColor, onChange
 
         {has("font") && (
           <label className="block">
-            <span className="block text-xs font-medium text-slate-600">Font</span>
+            <span className="field-label !mb-0">Font</span>
             <select
               value={FONT_OPTIONS.some((f) => f.value === layer.font) ? layer.font : ""}
               onChange={(e) => e.target.value && set("font", e.target.value)}
-              className="mt-1 w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
+              className="field mt-1"
             >
               <option value="">Template font</option>
               {FONT_OPTIONS.map((f) => (
@@ -81,11 +85,11 @@ export default function PropertiesPanel({ layer, hasChanges, roleColor, onChange
             {has("size") && <NumberField label="Size" value={layer.size} min={4} max={400} onChange={(v) => set("size", v)} />}
             {has("weight") && (
               <label className="block">
-                <span className="block text-xs font-medium text-slate-600">Weight</span>
+                <span className="field-label !mb-0">Weight</span>
                 <select
                   value={layer.weight ?? 400}
                   onChange={(e) => set("weight", Number(e.target.value))}
-                  className="mt-1 w-full rounded-lg border border-slate-300 px-2 py-1.5 text-sm"
+                  className="field mt-1"
                 >
                   <option value={400}>Regular</option>
                   <option value={600}>Semi-bold</option>
@@ -97,15 +101,15 @@ export default function PropertiesPanel({ layer, hasChanges, roleColor, onChange
         )}
 
         {has("align") && (
-          <div role="group" aria-label="Alignment" className="flex gap-1">
+          <div role="group" aria-label="Alignment" className="flex gap-1 rounded-lg bg-slate-100 p-0.5">
             {["left", "center", "right"].map((a) => (
               <button
                 key={a}
                 type="button"
                 aria-pressed={(layer.align ?? "left") === a}
                 onClick={() => set("align", a)}
-                className={`flex-1 rounded-lg border px-2 py-1 text-xs capitalize ${
-                  (layer.align ?? "left") === a ? "border-indigo-600 bg-indigo-600 text-white" : "border-slate-300 hover:bg-slate-50"
+                className={`h-8 flex-1 rounded-md px-2 text-xs font-medium capitalize ${
+                  (layer.align ?? "left") === a ? "bg-white text-indigo-700 shadow-sm ring-1 ring-indigo-200" : "text-slate-600 hover:bg-white/60"
                 }`}
               >
                 {a}

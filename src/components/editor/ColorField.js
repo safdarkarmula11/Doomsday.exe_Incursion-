@@ -25,16 +25,16 @@ export default function ColorField({ label, value, onChange, allowRole = false, 
 
   return (
     <div className="relative" ref={box}>
-      <span className="block text-xs font-medium text-slate-600">{label}</span>
+      <span className="field-label">{label}</span>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
         aria-label={`${label}: ${isRole ? "role colour" : value}`}
-        className="mt-1 flex w-full items-center gap-2 rounded-lg border border-slate-300 bg-white px-2 py-1.5 text-left text-sm hover:border-indigo-400"
+        className="flex h-9 w-full items-center gap-2 rounded-lg border border-slate-300 bg-white px-2 text-left text-sm hover:border-indigo-400"
       >
-        <span className="h-5 w-5 rounded border border-slate-300" style={{ background: shown }} />
-        <span className="font-mono text-xs text-slate-700">{isRole ? "role colour" : value}</span>
+        <span className="h-5 w-5 shrink-0 rounded-full border border-slate-300" style={{ background: shown }} />
+        <span className="font-mono text-xs uppercase tracking-wide text-slate-700">{isRole ? "role colour" : value}</span>
       </button>
       {open && (
         <div className="absolute left-0 top-full z-20 mt-1 w-56 rounded-lg border border-slate-200 bg-white p-3 shadow-lg">
