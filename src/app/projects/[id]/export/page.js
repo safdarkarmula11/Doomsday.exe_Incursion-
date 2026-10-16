@@ -44,6 +44,7 @@ export default function ExportPage() {
   const [summary, setSummary] = useState({ total: 0, byRole: {} });
   const [people, setPeople] = useState([]);
   const [error, setError] = useState("");
+  const [blocked, setBlocked] = useState(""); // set when the project cannot be opened at all
   const [needsDesign, setNeedsDesign] = useState(false);
 
   const [who, setWho] = useState("sample"); // "sample" or a person id
@@ -75,9 +76,15 @@ export default function ExportPage() {
       try {
         const res = await fetch(`/api/projects/${id}`);
         const d = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(d.error || "Could not load this project.");
+        if (!res.ok) {
+          setBlocked(res.status === 404 ? "missing" : "error");
+          throw new Error(d.error || "Could not load this project.");
+        }
         const r = Object.keys(d.project.eventData?.roles ?? {});
-        if (r.length === 0) throw new Error("Finish the event details first.");
+        if (r.length === 0) {
+          setBlocked("details");
+          throw new Error("Finish the event details first.");
+        }
         setRoles(r);
         setSampleRole(r[0]);
         const p = await fetch(`/api/projects/${id}/people?limit=200`);
@@ -214,6 +221,34 @@ export default function ExportPage() {
   const personQuery = who === "sample" ? `person=sample&role=${encodeURIComponent(sampleRole)}` : `person=${who}`;
   const count = roleFilter ? summary.byRole[roleFilter] ?? 0 : summary.total;
   const parts = Math.ceil(count / PART_SIZE);
+
+  if (blocked) {
+    return (
+      <main className="min-h-screen">
+        <div className="mx-auto max-w-3xl px-4 py-8 sm:py-10">
+          <Stepper current={5} />
+          <h1 className="page-title">Export</h1>
+          <p role="alert" className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {blocked === "missing"
+              ? "Project not found. It may have been deleted."
+              : blocked === "details"
+                ? "Finish the event details first."
+                : "Could not load this project. Try again in a moment."}
+          </p>
+          <div className="mt-4 flex gap-3">
+            {blocked === "details" && (
+              <Link href={`/projects/${id}/questions`} className="btn-primary">
+                Go to the details
+              </Link>
+            )}
+            <Link href="/" className="btn-secondary">
+              Back to your projects
+            </Link>
+          </div>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen">

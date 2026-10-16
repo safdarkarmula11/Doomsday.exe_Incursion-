@@ -29,7 +29,11 @@ export const EventDataSchema = z
     roles: z
       .record(z.string().min(1).max(40), z.number().int().nonnegative().nullable())
       .refine((r) => Object.keys(r).length > 0, "Add at least one role"),
-    fieldsToShow: z.array(z.string()).min(1, "Choose at least one field"),
+    // unknown names are dropped, so nothing odd is ever stored
+    fieldsToShow: z
+      .array(z.string())
+      .transform((a) => a.filter((k) => FIELD_OPTIONS.some((f) => f.key === k)))
+      .refine((a) => a.length > 0, "Choose at least one field"),
     qrBaseUrl: z
       .string()
       .trim()
