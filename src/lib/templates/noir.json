@@ -1,0 +1,177 @@
+{
+  "id": "noir",
+  "name": "Noir",
+  "version": 1,
+  "canvas": {
+    "width": 540,
+    "height": 856,
+    "background": "#0a0a0a"
+  },
+  "roleColors": {
+    "participant": "#3b82f6",
+    "organizer": "#ef4444",
+    "mentor": "#a855f7",
+    "volunteer": "#10b981"
+  },
+  "layers": [
+    {
+      "id": "accent-block",
+      "type": "rect",
+      "x": 270,
+      "y": 150,
+      "w": 270,
+      "h": 300,
+      "fill": "$role"
+    },
+    {
+      "id": "accent-line",
+      "type": "rect",
+      "x": 0,
+      "y": 400,
+      "w": 40,
+      "h": 8,
+      "fill": "$role"
+    },
+    {
+      "id": "logo-plate",
+      "type": "rect",
+      "x": 30,
+      "y": 28,
+      "w": 480,
+      "h": 80,
+      "fill": "#ffffff",
+      "radius": 12
+    },
+    {
+      "id": "logo-left",
+      "type": "image",
+      "x": 50,
+      "y": 36,
+      "w": 190,
+      "h": 64,
+      "src": "{{logoLeft}}",
+      "fit": "contain",
+      "align": "left"
+    },
+    {
+      "id": "logo-right",
+      "type": "image",
+      "x": 300,
+      "y": 36,
+      "w": 190,
+      "h": 64,
+      "src": "{{logoRight}}",
+      "fit": "contain",
+      "align": "right"
+    },
+    {
+      "id": "photo",
+      "type": "image",
+      "x": 50,
+      "y": 190,
+      "w": 270,
+      "h": 340,
+      "src": "{{photo}}",
+      "fit": "cover",
+      "shape": "rect",
+      "fallback": "initials"
+    },
+    {
+      "id": "event-name",
+      "type": "text",
+      "x": 335,
+      "y": 470,
+      "w": 175,
+      "h": 60,
+      "text": "{{eventName}}",
+      "font": "Arial, sans-serif",
+      "size": 22,
+      "minSize": 14,
+      "weight": 700,
+      "color": "#ffffff",
+      "align": "left",
+      "uppercase": true,
+      "maxLines": 2
+    },
+    {
+      "id": "name",
+      "type": "text",
+      "x": 40,
+      "y": 562,
+      "w": 460,
+      "h": 100,
+      "text": "{{name}}",
+      "font": "Arial, sans-serif",
+      "size": 46,
+      "minSize": 23,
+      "weight": 700,
+      "color": "#ffffff",
+      "align": "left",
+      "uppercase": true,
+      "maxLines": 2,
+      "lineHeight": 1.05
+    },
+    {
+      "id": "role-badge",
+      "type": "badge",
+      "x": 40,
+      "y": 676,
+      "w": 220,
+      "h": 44,
+      "text": "{{role}}",
+      "fill": "$role",
+      "color": "#ffffff",
+      "size": 20
+    },
+    {
+      "id": "id-number",
+      "type": "text",
+      "x": 40,
+      "y": 740,
+      "w": 330,
+      "h": 28,
+      "text": "ID: {{idNumber}}",
+      "font": "Arial, sans-serif",
+      "size": 22,
+      "minSize": 12,
+      "weight": 700,
+      "color": "#d4d4d8",
+      "align": "left"
+    },
+    {
+      "id": "event-date",
+      "type": "text",
+      "x": 40,
+      "y": 776,
+      "w": 330,
+      "h": 26,
+      "text": "{{eventDate}}",
+      "font": "Arial, sans-serif",
+      "size": 18,
+      "minSize": 12,
+      "weight": 600,
+      "color": "#a1a1aa",
+      "align": "left",
+      "uppercase": true,
+      "optional": true
+    },
+    {
+      "id": "qr",
+      "type": "qr",
+      "x": 408,
+      "y": 704,
+      "w": 100,
+      "h": 100,
+      "value": "{{qrUrl}}"
+    },
+    {
+      "id": "footer-band",
+      "type": "rect",
+      "x": 0,
+      "y": 830,
+      "w": 540,
+      "h": 26,
+      "fill": "$role"
+    }
+  ]
+}

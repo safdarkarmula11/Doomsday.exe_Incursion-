@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: content-studio
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: DATABASE_URL
+        sync: false   # paste your Neon connection string in the Render dashboard
+      - key: HF_TOKEN
+        sync: false   # optional: Hugging Face token for the AI helper
+      - key: HF_MODEL
+        value: Qwen/Qwen2.5-7B-Instruct

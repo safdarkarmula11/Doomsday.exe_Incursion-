@@ -1,0 +1,394 @@
+{
+  "id": "aurora",
+  "name": "Aurora",
+  "version": 1,
+  "canvas": {
+    "width": 540,
+    "height": 856,
+    "background": "#4c1d95"
+  },
+  "roleColors": {
+    "participant": "#2563eb",
+    "organizer": "#dc2626",
+    "mentor": "#7c3aed",
+    "volunteer": "#059669"
+  },
+  "layers": [
+    {
+      "id": "bg-gradient",
+      "type": "rect",
+      "x": 0,
+      "y": 0,
+      "w": 540,
+      "h": 856,
+      "fill": "$role",
+      "fill2": "#1e1b4b",
+      "angle": 60
+    },
+    {
+      "id": "hex0",
+      "type": "polygon",
+      "x": 380,
+      "y": 150,
+      "w": 170,
+      "h": 170,
+      "points": [
+        [
+          25,
+          3
+        ],
+        [
+          75,
+          3
+        ],
+        [
+          100,
+          50
+        ],
+        [
+          75,
+          97
+        ],
+        [
+          25,
+          97
+        ],
+        [
+          0,
+          50
+        ]
+      ],
+      "fill": "#ffffff",
+      "opacity": 0.1
+    },
+    {
+      "id": "hex1",
+      "type": "polygon",
+      "x": 430,
+      "y": 290,
+      "w": 110,
+      "h": 110,
+      "points": [
+        [
+          25,
+          3
+        ],
+        [
+          75,
+          3
+        ],
+        [
+          100,
+          50
+        ],
+        [
+          75,
+          97
+        ],
+        [
+          25,
+          97
+        ],
+        [
+          0,
+          50
+        ]
+      ],
+      "fill": "#ffffff",
+      "opacity": 0.08
+    },
+    {
+      "id": "hex2",
+      "type": "polygon",
+      "x": -40,
+      "y": 300,
+      "w": 130,
+      "h": 130,
+      "points": [
+        [
+          25,
+          3
+        ],
+        [
+          75,
+          3
+        ],
+        [
+          100,
+          50
+        ],
+        [
+          75,
+          97
+        ],
+        [
+          25,
+          97
+        ],
+        [
+          0,
+          50
+        ]
+      ],
+      "fill": "#ffffff",
+      "opacity": 0.08
+    },
+    {
+      "id": "hex3",
+      "type": "polygon",
+      "x": 20,
+      "y": 60,
+      "w": 90,
+      "h": 90,
+      "points": [
+        [
+          25,
+          3
+        ],
+        [
+          75,
+          3
+        ],
+        [
+          100,
+          50
+        ],
+        [
+          75,
+          97
+        ],
+        [
+          25,
+          97
+        ],
+        [
+          0,
+          50
+        ]
+      ],
+      "fill": "#ffffff",
+      "opacity": 0.07
+    },
+    {
+      "id": "dot0",
+      "type": "ellipse",
+      "x": 70,
+      "y": 190,
+      "w": 12,
+      "h": 12,
+      "fill": "#ffffff",
+      "opacity": 0.35
+    },
+    {
+      "id": "dot1",
+      "type": "ellipse",
+      "x": 468,
+      "y": 110,
+      "w": 10,
+      "h": 10,
+      "fill": "#ffffff",
+      "opacity": 0.35
+    },
+    {
+      "id": "dot2",
+      "type": "ellipse",
+      "x": 488,
+      "y": 250,
+      "w": 8,
+      "h": 8,
+      "fill": "#ffffff",
+      "opacity": 0.35
+    },
+    {
+      "id": "dot3",
+      "type": "ellipse",
+      "x": 44,
+      "y": 400,
+      "w": 9,
+      "h": 9,
+      "fill": "#ffffff",
+      "opacity": 0.35
+    },
+    {
+      "id": "logo-plate",
+      "type": "rect",
+      "x": 30,
+      "y": 26,
+      "w": 480,
+      "h": 80,
+      "fill": "#ffffff",
+      "radius": 40
+    },
+    {
+      "id": "logo-left",
+      "type": "image",
+      "x": 60,
+      "y": 34,
+      "w": 180,
+      "h": 64,
+      "src": "{{logoLeft}}",
+      "fit": "contain",
+      "align": "left"
+    },
+    {
+      "id": "logo-right",
+      "type": "image",
+      "x": 300,
+      "y": 34,
+      "w": 180,
+      "h": 64,
+      "src": "{{logoRight}}",
+      "fit": "contain",
+      "align": "right"
+    },
+    {
+      "id": "photo",
+      "type": "image",
+      "x": 150,
+      "y": 128,
+      "w": 240,
+      "h": 240,
+      "src": "{{photo}}",
+      "fit": "cover",
+      "shape": "circle",
+      "fallback": "initials",
+      "ringColor": "#ffffff",
+      "ringWidth": 8
+    },
+    {
+      "id": "event-name",
+      "type": "text",
+      "x": 30,
+      "y": 392,
+      "w": 480,
+      "h": 40,
+      "text": "{{eventName}}",
+      "font": "Arial, sans-serif",
+      "size": 30,
+      "minSize": 15,
+      "weight": 700,
+      "color": "#ffffff",
+      "align": "center",
+      "uppercase": true
+    },
+    {
+      "id": "panel",
+      "type": "polygon",
+      "x": 0,
+      "y": 450,
+      "w": 540,
+      "h": 406,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          38,
+          0
+        ],
+        [
+          50,
+          5
+        ],
+        [
+          62,
+          0
+        ],
+        [
+          100,
+          0
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          0,
+          100
+        ]
+      ],
+      "fill": "#ffffff"
+    },
+    {
+      "id": "name",
+      "type": "text",
+      "x": 30,
+      "y": 500,
+      "w": 480,
+      "h": 90,
+      "text": "{{name}}",
+      "font": "Arial, sans-serif",
+      "size": 38,
+      "minSize": 19,
+      "weight": 700,
+      "color": "#111827",
+      "align": "center",
+      "uppercase": true,
+      "maxLines": 2,
+      "lineHeight": 1.1
+    },
+    {
+      "id": "role-badge",
+      "type": "badge",
+      "x": 145,
+      "y": 604,
+      "w": 250,
+      "h": 48,
+      "text": "{{role}}",
+      "fill": "$role",
+      "color": "#ffffff",
+      "size": 22
+    },
+    {
+      "id": "id-number",
+      "type": "text",
+      "x": 30,
+      "y": 700,
+      "w": 360,
+      "h": 30,
+      "text": "ID: {{idNumber}}",
+      "font": "Arial, sans-serif",
+      "size": 24,
+      "minSize": 12,
+      "weight": 700,
+      "color": "#111827",
+      "align": "left"
+    },
+    {
+      "id": "event-date",
+      "type": "text",
+      "x": 30,
+      "y": 744,
+      "w": 360,
+      "h": 28,
+      "text": "{{eventDate}}",
+      "font": "Arial, sans-serif",
+      "size": 20,
+      "minSize": 12,
+      "weight": 600,
+      "color": "#475569",
+      "align": "left",
+      "uppercase": true,
+      "optional": true
+    },
+    {
+      "id": "qr",
+      "type": "qr",
+      "x": 408,
+      "y": 704,
+      "w": 100,
+      "h": 100,
+      "value": "{{qrUrl}}"
+    },
+    {
+      "id": "footer-band",
+      "type": "rect",
+      "x": 0,
+      "y": 816,
+      "w": 540,
+      "h": 40,
+      "fill": "$role"
+    }
+  ]
+}

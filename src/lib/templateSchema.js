@@ -22,7 +22,31 @@ const base = {
 const text = z.string().max(300);
 
 const Layer = z.discriminatedUnion("type", [
-  z.object({ ...base, type: z.literal("rect"), fill: colour, radius: num.min(0).max(2000).optional() }).strict(),
+  z.object({ ...base, type: z.literal("rect"), fill: colour, fill2: colour.optional(), angle: num.optional(), opacity: num.min(0).max(1).optional(), radius: num.min(0).max(2000).optional() }).strict(),
+  z
+    .object({
+      ...base,
+      type: z.literal("polygon"),
+      points: z.array(z.tuple([num.min(-100).max(200), num.min(-100).max(200)])).min(3).max(12),
+      fill: colour,
+      fill2: colour.optional(),
+      angle: num.optional(),
+      opacity: num.min(0).max(1).optional(),
+    })
+    .strict(),
+  z
+    .object({
+      ...base,
+      type: z.literal("ellipse"),
+      fill: colour.or(z.literal("none")),
+      fill2: colour.optional(),
+      angle: num.optional(),
+      opacity: num.min(0).max(1).optional(),
+      stroke: colour.optional(),
+      strokeWidth: num.min(0).max(100).optional(),
+      strokeOpacity: num.min(0).max(1).optional(),
+    })
+    .strict(),
   z
     .object({
       ...base,
@@ -48,6 +72,9 @@ const Layer = z.discriminatedUnion("type", [
       shape: z.enum(["rect", "circle"]).optional(),
       fallback: z.enum(["initials", "none"]).optional(),
       align: align.optional(),
+      radius: num.min(0).max(2000).optional(),
+      ringColor: colour.optional(),
+      ringWidth: num.min(0).max(60).optional(),
     })
     .strict(),
   z.object({ ...base, type: z.literal("qr"), value: text }).strict(),

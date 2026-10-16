@@ -1,0 +1,205 @@
+{
+  "id": "campus",
+  "name": "Campus",
+  "version": 1,
+  "canvas": {
+    "width": 540,
+    "height": 856,
+    "background": "#ffffff"
+  },
+  "roleColors": {
+    "participant": "#2563eb",
+    "organizer": "#dc2626",
+    "mentor": "#7c3aed",
+    "volunteer": "#059669"
+  },
+  "layers": [
+    {
+      "id": "logo-left",
+      "type": "image",
+      "x": 30,
+      "y": 30,
+      "w": 200,
+      "h": 64,
+      "src": "{{logoLeft}}",
+      "fit": "contain",
+      "align": "left"
+    },
+    {
+      "id": "logo-right",
+      "type": "image",
+      "x": 310,
+      "y": 30,
+      "w": 200,
+      "h": 64,
+      "src": "{{logoRight}}",
+      "fit": "contain",
+      "align": "right"
+    },
+    {
+      "id": "stripe",
+      "type": "polygon",
+      "x": 0,
+      "y": 108,
+      "w": 540,
+      "h": 70,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          100,
+          45
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          0,
+          55
+        ]
+      ],
+      "fill": "$role"
+    },
+    {
+      "id": "stripe-dark",
+      "type": "polygon",
+      "x": 0,
+      "y": 108,
+      "w": 540,
+      "h": 70,
+      "points": [
+        [
+          0,
+          55
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          100,
+          100
+        ],
+        [
+          0,
+          70
+        ]
+      ],
+      "fill": "#111827"
+    },
+    {
+      "id": "event-name",
+      "type": "text",
+      "x": 30,
+      "y": 196,
+      "w": 480,
+      "h": 40,
+      "text": "{{eventName}}",
+      "font": "Arial, sans-serif",
+      "size": 32,
+      "minSize": 16,
+      "weight": 700,
+      "color": "#111827",
+      "align": "center",
+      "uppercase": true
+    },
+    {
+      "id": "event-subtitle",
+      "type": "text",
+      "x": 30,
+      "y": 238,
+      "w": 480,
+      "h": 26,
+      "text": "{{eventSubtitle}}",
+      "font": "Arial, sans-serif",
+      "size": 20,
+      "minSize": 12,
+      "weight": 700,
+      "color": "$role",
+      "align": "center",
+      "uppercase": true,
+      "optional": true
+    },
+    {
+      "id": "photo",
+      "type": "image",
+      "x": 120,
+      "y": 284,
+      "w": 300,
+      "h": 300,
+      "src": "{{photo}}",
+      "fit": "cover",
+      "shape": "rect",
+      "fallback": "initials",
+      "radius": 18,
+      "ringColor": "$role",
+      "ringWidth": 6
+    },
+    {
+      "id": "name",
+      "type": "text",
+      "x": 30,
+      "y": 612,
+      "w": 480,
+      "h": 100,
+      "text": "{{name}}",
+      "font": "Arial, sans-serif",
+      "size": 50,
+      "minSize": 25,
+      "weight": 700,
+      "color": "#111827",
+      "align": "center",
+      "uppercase": true,
+      "maxLines": 2,
+      "lineHeight": 1.05
+    },
+    {
+      "id": "role-badge",
+      "type": "badge",
+      "x": 145,
+      "y": 720,
+      "w": 250,
+      "h": 44,
+      "text": "{{role}}",
+      "fill": "$role",
+      "color": "#ffffff",
+      "size": 20
+    },
+    {
+      "id": "id-number",
+      "type": "text",
+      "x": 30,
+      "y": 780,
+      "w": 360,
+      "h": 26,
+      "text": "ID: {{idNumber}}",
+      "font": "Arial, sans-serif",
+      "size": 20,
+      "minSize": 12,
+      "weight": 700,
+      "color": "#374151",
+      "align": "left"
+    },
+    {
+      "id": "qr",
+      "type": "qr",
+      "x": 408,
+      "y": 704,
+      "w": 100,
+      "h": 100,
+      "value": "{{qrUrl}}"
+    },
+    {
+      "id": "footer-band",
+      "type": "rect",
+      "x": 0,
+      "y": 830,
+      "w": 540,
+      "h": 26,
+      "fill": "#111827"
+    }
+  ]
+}

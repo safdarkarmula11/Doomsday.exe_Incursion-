@@ -76,7 +76,8 @@ export function toPrintSvg(svg, canvas, { marks = true } = {}) {
   return svg
     .replace(viewBox, `viewBox="${-M} ${-M} ${W + 2 * M} ${H + 2 * M}"`)
     .replace(bg, `<rect x="${-B}" y="${-B}" width="${W + 2 * B}" height="${H + 2 * B}"`)
-    .replace(/<\/svg>\s*$/, `  ${markPath}\n</svg>`);
+    .replace(/(<svg[^>]*>)/, `$1<clipPath id="clip-bleedbox"><rect x="${-B}" y="${-B}" width="${W + 2 * B}" height="${H + 2 * B}"/></clipPath><g clip-path="url(#clip-bleedbox)">`)
+    .replace(/<\/svg>\s*$/, `</g>\n  ${markPath}\n</svg>`);
 }
 
 /**

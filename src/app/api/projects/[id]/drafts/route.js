@@ -1,6 +1,7 @@
 import { db } from "@/lib/db";
 import { validateEventData } from "@/lib/eventData";
 import { ensureTemplates, renderDraft } from "@/lib/drafts";
+import { DEFAULT_DRAFT_IDS } from "@/lib/templates";
 import { kitForProject } from "@/lib/brandKits";
 
 /** Renderer warnings -> short sentences. The sample person has no photo on purpose, so that one is skipped. */
@@ -87,9 +88,9 @@ export async function POST(request, { params }) {
 
     if (existing > 0) await db.draft.deleteMany({ where: { projectId: id } });
     await db.draft.createMany({
-      data: Object.values(templates).map((t) => ({ projectId: id, templateId: t.id, config: {}, version })),
+      data: DEFAULT_DRAFT_IDS.filter((slug) => templates[slug]).map((slug) => templates[slug]).map((t) => ({ projectId: id, templateId: t.id, config: {}, version })),
     });
-    return Response.json({ created: Object.keys(templates).length }, { status: 201 });
+    return Response.json({ created: DEFAULT_DRAFT_IDS.length }, { status: 201 });
   } catch (e) {
     console.error("POST drafts failed:", e);
     return Response.json({ error: DB_ERROR }, { status: 500 });

@@ -17,6 +17,8 @@ export const FONT_OPTIONS = [
 /** Which properties the side panel may change, per layer type. */
 export const EDITABLE = {
   rect: ["x", "y", "w", "h", "fill"],
+  polygon: ["fill"],
+  ellipse: ["fill"],
   text: ["x", "y", "w", "h", "text", "font", "size", "weight", "align", "color"],
   badge: ["x", "y", "w", "h", "text", "size", "weight", "fill", "color"],
   image: ["x", "y", "w", "h"],
