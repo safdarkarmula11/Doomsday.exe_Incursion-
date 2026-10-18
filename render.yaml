@@ -7,6 +7,8 @@ services:
     envVars:
       - key: DATABASE_URL
         sync: false   # paste your Neon connection string in the Render dashboard
+      - key: APP_PASSCODE
+        sync: false   # choose a passcode; everyone who opens the app needs it
       - key: HF_TOKEN
         sync: false   # optional: Hugging Face token for the AI helper
       - key: HF_MODEL

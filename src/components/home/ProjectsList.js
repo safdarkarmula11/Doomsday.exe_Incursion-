@@ -25,12 +25,19 @@ function timeAgo(iso) {
 export default function ProjectsList() {
   const [projects, setProjects] = useState(null);
   const [error, setError] = useState("");
+  const [locked, setLocked] = useState(false);
 
   const load = useCallback(async () => {
     try {
       const res = await fetch("/api/projects");
       const data = await res.json();
+      if (res.status === 401) {
+        setLocked(true);
+        setProjects([]);
+        return;
+      }
       if (!res.ok) throw new Error(data.error || "Could not load projects.");
+      setLocked(false);
       setProjects(data.projects);
       setError("");
     } catch (e) {
@@ -73,7 +80,15 @@ export default function ProjectsList() {
         </p>
       )}
 
-      {projects === null ? (
+      {locked ? (
+        <div className="mt-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-sm text-slate-600">
+          Projects are protected.{" "}
+          <Link href="/unlock?next=/" className="font-medium text-indigo-600 hover:underline">
+            Enter the passcode
+          </Link>{" "}
+          to see them.
+        </div>
+      ) : projects === null ? (
         <p className="mt-4 text-sm text-slate-500">Loading...</p>
       ) : projects.length === 0 && !error ? (
         <div className="mt-4 rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-center text-sm text-slate-500">

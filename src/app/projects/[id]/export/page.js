@@ -548,6 +548,13 @@ export default function ExportPage() {
                 Back to the editor
               </Link>
             </div>
+            <p className="rounded-lg bg-slate-100 px-4 py-3 text-sm text-slate-600">
+              On the day: scan card QR codes with a phone, or tick people off by hand, on the{" "}
+              <Link href={`/checkin/${id}`} className="font-medium text-indigo-600 underline">
+                check-in page
+              </Link>
+              .
+            </p>
           </div>
 
           <aside className="lg:col-start-2 lg:row-start-1 lg:sticky lg:top-6">

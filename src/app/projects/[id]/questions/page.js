@@ -321,7 +321,7 @@ export default function QuestionsPage() {
               id="qrBaseUrl"
               label="Attendance link for the QR code"
               error={errors.qrBaseUrl}
-              hint="Each card's QR points to this link plus the person's ID. A dummy link is fine for a demo."
+              hint="Each card's QR points to this link plus the person's ID. The built-in check-in page marks people as arrived when staff scan their card."
             >
               <input
                 id="qrBaseUrl"
@@ -330,6 +330,13 @@ export default function QuestionsPage() {
                 placeholder="https://example.com/attend"
                 className={inputClass(errors.qrBaseUrl)}
               />
+              <button
+                type="button"
+                onClick={() => set({ qrBaseUrl: `${window.location.origin}/checkin/${id}` })}
+                className="mt-2 text-sm font-medium text-indigo-600 hover:underline"
+              >
+                Use this app&apos;s built-in check-in page
+              </button>
             </Field>
           )}
 

@@ -35,6 +35,7 @@ Needs Node 22+ and a PostgreSQL database. For PDF/PNG export run `npx puppeteer 
 
 | Name | Required | Notes |
 | --- | --- | --- |
+| `APP_PASSCODE` | recommended | Turns on a passcode gate. Everything except the landing page then asks for it. Leave empty for open access on your own PC. |
 | `DATABASE_URL` | yes | PostgreSQL URL. On Neon use the direct (non-pooled) string with `?sslmode=require`. |
 | `HF_TOKEN` | no | Hugging Face token. Without it the app uses simple rule-based parsing. |
 | `HF_MODEL` | no | Default `Qwen/Qwen2.5-7B-Instruct`. |
@@ -64,9 +65,21 @@ Aarav Sharma,participant,PART-001,/sample-photos/p01.png,Computer Science
 - Photo links must start with `https://` (or `/` for files in `public/`). People without a photo get their initials.
 - Samples: `public/sample-people.csv` (no photos) and `public/sample-people-photos.csv` (12 people with placeholder avatars).
 
-## Attendance QR codes
+## Attendance QR codes and check-in
 
-The attendance link on the Questions step is combined with each person's ID: `https://site/checkin` becomes `https://site/checkin/PART-001`. A link ending in `?id=` or `=` gets the ID appended directly. The app does not include an attendance page yet, so use your own page or the site address for now.
+On the Questions step, click **Use this app's built-in check-in page**. Each card's QR then opens `/checkin/<project>/<ID>`; the person is marked as arrived and the phone shows their name, role and time. Scanning twice shows "Already checked in", and Undo removes a check-in.
+
+`/checkin/<project>` is the staff list: arrived count per role, search, manual check-in, and a CSV download. Check-ins are kept if you import the people list again. The page asks for the passcode when `APP_PASSCODE` is set, so staff enter it once on their phone.
+
+You can also type any other link; the person's ID is appended to it.
+
+## Passcode
+
+With `APP_PASSCODE` set, visitors see only the landing page until they enter it at `/unlock`. The passcode is never stored in the cookie, wrong guesses are rate-limited, and changing the passcode signs everyone out. Add it in Render under Environment.
+
+## Keeping the free Render plan awake
+
+Render's free plan sleeps after about 15 minutes. To avoid a 50-second first load, create a free monitor (for example UptimeRobot) that requests `https://<your-app>.onrender.com/api/health` every 5 minutes.
 
 ## Project layout
 

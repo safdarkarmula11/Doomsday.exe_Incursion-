@@ -34,6 +34,7 @@ model Project {
   people     Person[]
   drafts     Draft[]
   assets     Asset[]
+  attendance Attendance[]
 }
 
 // One row per card.
@@ -47,6 +48,21 @@ model Person {
   photoUrl   String?
   extra      Json    @default("{}")
 
+  @@index([projectId])
+}
+
+// One row per person who has been scanned in. Keyed by the card's ID (not the Person row),
+// so importing the people list again does not wipe the check-ins.
+model Attendance {
+  id         String   @id @default(cuid())
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  externalId String
+  name       String
+  role       String
+  scannedAt  DateTime @default(now())
+
+  @@unique([projectId, externalId])
   @@index([projectId])
 }
 
