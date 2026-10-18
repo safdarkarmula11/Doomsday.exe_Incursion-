@@ -1,13 +1,13 @@
 Name,Role,ID Number,Photo Link,Department
-Aarav Sharma,participant,PART-001,/sample-photos/p01.png,Computer Science
-Diya Patel,participant,PART-002,/sample-photos/p02.png,Electronics
-Rohan Mehta,participant,PART-003,/sample-photos/p03.png,Mechanical
-Ishita Desai,participant,PART-004,/sample-photos/p04.png,Information Technology
-Kabir Singh,mentor,MENT-001,/sample-photos/p05.png,Computer Science
-Meera Iyer,mentor,MENT-002,/sample-photos/p06.png,Electronics
-Priya Nair,organizer,ORG-001,/sample-photos/p07.png,Computer Science
-Yash Trivedi,organizer,ORG-002,/sample-photos/p08.png,Civil
-Sana Khan,organizer,ORG-003,/sample-photos/p09.png,Chemical
-Neel Joshi,volunteer,VOL-001,/sample-photos/p10.png,Electrical
-Tanvi Shah,volunteer,VOL-002,/sample-photos/p11.png,Information Technology
-Dev Parikh,volunteer,VOL-003,/sample-photos/p12.png,Mechanical
+Aarav Sharma,participant,PART-001,/sample-photos/p01.jpg,Computer Science
+Diya Patel,participant,PART-002,/sample-photos/p02.jpg,Electronics
+Rohan Mehta,participant,PART-003,/sample-photos/p03.jpg,Mechanical
+Ishita Desai,participant,PART-004,/sample-photos/p04.jpg,Information Technology
+Kabir Singh,mentor,MENT-001,/sample-photos/p05.jpg,Computer Science
+Meera Iyer,mentor,MENT-002,/sample-photos/p06.jpg,Electronics
+Priya Nair,organizer,ORG-001,/sample-photos/p07.jpg,Computer Science
+Yash Trivedi,organizer,ORG-002,/sample-photos/p08.jpg,Civil
+Sana Khan,organizer,ORG-003,/sample-photos/p09.jpg,Chemical
+Neel Joshi,volunteer,VOL-001,/sample-photos/p10.jpg,Electrical
+Tanvi Shah,volunteer,VOL-002,/sample-photos/p11.jpg,Information Technology
+Dev Parikh,volunteer,VOL-003,/sample-photos/p12.jpg,Mechanical

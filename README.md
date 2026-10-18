@@ -58,7 +58,7 @@ Columns are matched by name, so common variants work (`Name`, `Role`, `ID Number
 
 ```csv
 Name,Role,ID Number,Photo Link,Department
-Aarav Sharma,participant,PART-001,/sample-photos/p01.png,Computer Science
+Aarav Sharma,participant,PART-001,/sample-photos/p01.jpg,Computer Science
 ```
 
 - Roles must match the event's roles; unknown roles can be mapped or skipped during import.

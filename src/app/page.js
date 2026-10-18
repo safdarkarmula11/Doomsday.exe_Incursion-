@@ -57,10 +57,10 @@ const FEATURES = [
 ];
 
 const ROLES = [
-  { role: "participant", label: "Participant", photo: "/sample-photos/p01.png" },
-  { role: "mentor", label: "Mentor", photo: "/sample-photos/p05.png" },
-  { role: "organizer", label: "Organizer", photo: "/sample-photos/p07.png" },
-  { role: "volunteer", label: "Volunteer", photo: "/sample-photos/p10.png" },
+  { role: "participant", label: "Participant", photo: "/sample-photos/p01.jpg" },
+  { role: "mentor", label: "Mentor", photo: "/sample-photos/p05.jpg" },
+  { role: "organizer", label: "Organizer", photo: "/sample-photos/p07.jpg" },
+  { role: "volunteer", label: "Volunteer", photo: "/sample-photos/p10.jpg" },
 ];
 
 const FAQ = [
@@ -113,9 +113,9 @@ export default function Home() {
 
           <div className="relative mx-auto w-full max-w-md">
             <div className="flex items-center justify-center">
-              <SampleCard template="midnight" role="mentor" photo="/sample-photos/p06.png" prefix="h1" className="-mr-10 mt-8 hidden w-40 -rotate-6 sm:block md:w-44" />
-              <SampleCard template="campus" role="participant" photo="/sample-photos/p01.png" prefix="h2" className="relative z-10 w-52 md:w-56" />
-              <SampleCard template="aurora" role="organizer" photo="/sample-photos/p07.png" prefix="h3" className="-ml-10 mt-8 hidden w-40 rotate-6 sm:block md:w-44" />
+              <SampleCard template="midnight" role="mentor" photo="/sample-photos/p06.jpg" prefix="h1" className="-mr-10 mt-8 hidden w-40 -rotate-6 sm:block md:w-44" />
+              <SampleCard template="campus" role="participant" photo="/sample-photos/p01.jpg" prefix="h2" className="relative z-10 w-52 md:w-56" />
+              <SampleCard template="aurora" role="organizer" photo="/sample-photos/p07.jpg" prefix="h3" className="-ml-10 mt-8 hidden w-40 rotate-6 sm:block md:w-44" />
             </div>
             <p className="mt-5 text-center font-mono text-[11px] text-slate-500">Sample cards with placeholder text and drawn avatars</p>
           </div>

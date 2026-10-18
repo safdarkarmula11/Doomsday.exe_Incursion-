@@ -12,7 +12,7 @@ const SAMPLE_EVENT = {
 };
 
 /** One real card, drawn by the same renderer the app uses. Server component. */
-export default function SampleCard({ template = "campus", role = "participant", photo = "/sample-photos/p01.png", prefix = "s", className = "" }) {
+export default function SampleCard({ template = "campus", role = "participant", photo = "/sample-photos/p01.jpg", prefix = "s", className = "" }) {
   const t = getTemplate(template);
   const { svg } = renderCard(t, cardData(SAMPLE_EVENT, { ...samplePerson(role), photo }));
   // Several cards share one page, so ids inside them must be unique.
